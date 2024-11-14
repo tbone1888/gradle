@@ -64,7 +64,6 @@ import static org.gradle.util.internal.TextUtil.getPluralEnding;
  */
 class SelectorState implements DependencyGraphSelector, ResolvableSelectorState {
     private final ComponentSelector componentSelector;
-    private final boolean constraint;
     private final DependencyToComponentIdResolver resolver;
     private final ResolvedVersionConstraint versionConstraint;
     private final List<ComponentSelectionDescriptorInternal> dependencyReasons = new ArrayList<>(4);
@@ -81,6 +80,7 @@ class SelectorState implements DependencyGraphSelector, ResolvableSelectorState 
     private boolean fromLock;
     private boolean reusable;
     private boolean markedReusableAlready;
+    private boolean constraint;
 
     @SuppressWarnings("deprecation")
     private org.gradle.api.artifacts.ClientModule clientModule;
@@ -100,13 +100,11 @@ class SelectorState implements DependencyGraphSelector, ResolvableSelectorState 
         DependencyToComponentIdResolver resolver,
         ResolveState resolveState,
         ModuleResolveState targetModule,
-        boolean versionByAncestor,
-        boolean constraint
+        boolean versionByAncestor
     ) {
         this.componentSelector = componentSelector;
         this.resolver = resolver;
         this.targetModule = targetModule;
-        this.constraint = constraint;
         this.isProjectSelector = componentSelector instanceof ProjectComponentSelector;
 
         if (versionByAncestor) {
@@ -391,6 +389,14 @@ class SelectorState implements DependencyGraphSelector, ResolvableSelectorState 
             fromLock = true;
             resolved = false; // when a selector changes from non lock to lock, we must reselect
         }
+
+        // TODO: What if the constraint is removed? We want to set this false then.
+        // Would be nice if we didn't need to track this on the selector.
+        if (!constraint && dependencyState.getDependency().isConstraint()) {
+            constraint = true;
+            resolved = false; // We treat the attributes of an edge differently if it is a constraint
+        }
+
         if (dependencyState.getSubstitutionFailure() != null && dependencyFailure == null) {
             dependencyFailure = dependencyState.getSubstitutionFailure();
         }
