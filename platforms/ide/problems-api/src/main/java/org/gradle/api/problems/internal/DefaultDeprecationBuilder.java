@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-package org.gradle.api.problems;
+package org.gradle.api.problems.internal;
 
-/**
- * Provides options to configure deprecations.
- *
- * @see ProblemReporter
- * @since 8.6
- */
-public interface DeprecationSpec {
+import org.gradle.api.problems.DeprecationSpec;
+import org.gradle.problems.buildtree.ProblemStream;
 
-    GenericDeprecationSpec deprecate(String what);
+import javax.annotation.Nullable;
 
-    MethodDeprecationSpec deprecateMethod(String what);
+public class DefaultDeprecationBuilder implements DeprecationSpec {
 
-    PluginDeprecationSpec deprecatePlugin(String what);
+    private final DefaultProblemBuilder delegate;
+
+    public DefaultDeprecationBuilder(@Nullable ProblemStream problemStream, AdditionalDataBuilderFactory additionalDataBuilderFactory) {
+        this.delegate = new DefaultProblemBuilder(problemStream, additionalDataBuilderFactory);
+    }
+
+
 
 }

@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-package org.gradle.api.problems;
+package org.gradle.api.problems
 
-/**
- * Provides options to configure deprecations.
- *
- * @see ProblemReporter
- * @since 8.6
- */
-public interface DeprecationSpec {
 
-    GenericDeprecationSpec deprecate(String what);
+import org.gradle.util.TestUtil
+import spock.lang.Specification
 
-    MethodDeprecationSpec deprecateMethod(String what);
+class DeprecationReporterTest extends Specification {
 
-    PluginDeprecationSpec deprecatePlugin(String what);
+    def "report simple deprecation"() {
+        def problems = TestUtil.problemsService()
+        problems.deprecationReporter
+    }
 
 }

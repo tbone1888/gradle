@@ -14,20 +14,25 @@
  * limitations under the License.
  */
 
-package org.gradle.api.problems;
+package org.gradle.api.problems.internal;
 
-/**
- * Provides options to configure deprecations.
- *
- * @see ProblemReporter
- * @since 8.6
- */
-public interface DeprecationSpec {
+import org.gradle.api.problems.OpaqueDeprecatedVersion;
 
-    GenericDeprecationSpec deprecate(String what);
+import javax.annotation.Nullable;
 
-    MethodDeprecationSpec deprecateMethod(String what);
+public class DefaultOpaqueDeprecatedVersion implements OpaqueDeprecatedVersion {
 
-    PluginDeprecationSpec deprecatePlugin(String what);
+    private final String version;
+
+    public DefaultOpaqueDeprecatedVersion(String version) {
+        this.version = version;
+    }
+
+    @Nullable
+    @Override
+    public String getVersion() {
+        return version;
+    }
 
 }
+

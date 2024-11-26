@@ -16,18 +16,8 @@
 
 package org.gradle.api.problems;
 
-/**
- * Provides options to configure deprecations.
- *
- * @see ProblemReporter
- * @since 8.6
- */
-public interface DeprecationSpec {
+public interface GenericDeprecationSpec {
 
-    GenericDeprecationSpec deprecate(String what);
 
-    MethodDeprecationSpec deprecateMethod(String what);
-
-    PluginDeprecationSpec deprecatePlugin(String what);
 
 }

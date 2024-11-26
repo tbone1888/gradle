@@ -18,18 +18,20 @@ package org.gradle.api.problems;
 
 import javax.annotation.Nullable;
 
-public interface DeprecatedGavcVersion {
+/**
+ * Semantic version of a deprecated feature.
+ * <p>
+ * One significant difference between this and {@link OpaqueDeprecatedVersion} is that this version is sortable.
+ * With ordering, we can determine a minimum version when the code using deprecations will break.
+ */
+public interface DeprecatedSemverVersion extends DeprecatedVersion {
+
+    String getMajor();
 
     @Nullable
-    String getGroup();
+    String getMinor();
 
     @Nullable
-    String getArtifact();
-
-    @Nullable
-    String getVersion();
-
-    @Nullable
-    String getClassifier();
+    String getPatch();
 
 }
