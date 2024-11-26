@@ -14,25 +14,38 @@
  * limitations under the License.
  */
 
-package org.gradle.api.problems.internal;
+package org.gradle.api.problems.internal.deprecation.version;
 
-import org.gradle.api.problems.OpaqueDeprecatedVersion;
+import org.gradle.api.problems.deprecation.version.DeprecatedSemverVersion;
 
 import javax.annotation.Nullable;
 
-public class DefaultOpaqueDeprecatedVersion implements OpaqueDeprecatedVersion {
+public class DefaultDeprecatedSemverVersion implements DeprecatedSemverVersion {
 
-    private final String version;
+    private final String major;
+    private final String minor;
+    private final String patch;
 
-    public DefaultOpaqueDeprecatedVersion(String version) {
-        this.version = version;
+    public DefaultDeprecatedSemverVersion(String major, String minor, String patch) {
+        this.major = major;
+        this.minor = minor;
+        this.patch = patch;
+    }
+
+    @Override
+    public String getMajor() {
+        return major;
     }
 
     @Nullable
     @Override
-    public String getVersion() {
-        return version;
+    public String getMinor() {
+        return minor;
     }
 
+    @Nullable
+    @Override
+    public String getPatch() {
+        return patch;
+    }
 }
-

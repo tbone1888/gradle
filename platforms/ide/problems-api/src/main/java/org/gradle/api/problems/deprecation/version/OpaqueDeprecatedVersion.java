@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package org.gradle.api.problems;
+package org.gradle.api.problems.deprecation.version;
+
+import javax.annotation.Nullable;
 
 /**
- * Provides options to configure deprecations.
- *
- * @see ProblemReporter
- * @since 8.6
+ * Non-semantic version of a deprecated feature using an opaque string.
+ * <p>
+ * Keep in mind that using this version in a deprecation will
+ * when the code using a unit (e.g. plugin, build file, etc.) will stop working.
  */
-public interface DeprecationSpec {
+public interface OpaqueDeprecatedVersion extends DeprecatedVersion {
 
-    GenericDeprecationSpec deprecate(String what);
-
-    MethodDeprecationSpec deprecateMethod(String what);
-
-    PluginDeprecationSpec deprecatePlugin(String what);
+    @Nullable
+    String getVersion();
 
 }

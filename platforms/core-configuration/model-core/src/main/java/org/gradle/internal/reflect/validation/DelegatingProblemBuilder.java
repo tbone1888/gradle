@@ -20,6 +20,7 @@ import org.gradle.api.Action;
 import org.gradle.api.NonNullApi;
 import org.gradle.api.problems.ProblemGroup;
 import org.gradle.api.problems.Severity;
+import org.gradle.api.problems.deprecation.spec.DeprecateGenericSpec;
 import org.gradle.api.problems.internal.AdditionalDataSpec;
 import org.gradle.api.problems.internal.DocLink;
 import org.gradle.api.problems.internal.InternalProblemBuilder;
@@ -124,6 +125,16 @@ class DelegatingProblemBuilder implements InternalProblemBuilder {
     @Override
     public InternalProblemBuilder severity(Severity severity) {
         return validateDelegate(delegate.severity(severity));
+    }
+
+    @Override
+    public DeprecateGenericSpec removedIn(String version) {
+        return validateDelegate(delegate.removedIn(version));
+    }
+
+    @Override
+    public DeprecateGenericSpec removedIn(String major, String minor, String path) {
+        return validateDelegate(delegate.removedIn(major, minor, path));
     }
 
     private <T> T validateDelegate(T newDelegate) {

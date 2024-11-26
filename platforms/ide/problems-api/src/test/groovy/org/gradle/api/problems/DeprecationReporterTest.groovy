@@ -16,15 +16,39 @@
 
 package org.gradle.api.problems
 
-
+import org.gradle.api.problems.deprecation.DeprecationReporter
 import org.gradle.util.TestUtil
 import spock.lang.Specification
 
 class DeprecationReporterTest extends Specification {
 
-    def "report simple deprecation"() {
-        def problems = TestUtil.problemsService()
-        problems.deprecationReporter
+    DeprecationReporter reporter
+
+    def setup() {
+        Problems problems = TestUtil.problemsService()
+        reporter = problems.deprecationReporter
+    }
+
+    def "deprecate"() {
+        reporter.deprecate {
+
+        }
+    }
+
+    def "deprecate behavior"() {
+        reporter.deprecateBehavior("This shouldn't called with that anymore") {
+
+        }
+    }
+
+    def "deprecate this method"() {
+        reporter.deprecateMethod() {
+
+        }
+    }
+
+    def "deprecate other method"() {
+
     }
 
 }

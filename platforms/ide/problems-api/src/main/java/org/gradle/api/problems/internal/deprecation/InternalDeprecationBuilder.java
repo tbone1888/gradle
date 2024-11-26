@@ -14,24 +14,11 @@
  * limitations under the License.
  */
 
-package org.gradle.api.problems;
+package org.gradle.api.problems.internal.deprecation;
 
-import javax.annotation.Nullable;
+import org.gradle.api.problems.deprecation.spec.DeprecateBehaviorGenericSpec;
+import org.gradle.api.problems.deprecation.spec.DeprecateGenericSpec;
+import org.gradle.api.problems.deprecation.spec.DeprecateMethodGenericSpec;
 
-/**
- * Semantic version of a deprecated feature.
- * <p>
- * One significant difference between this and {@link OpaqueDeprecatedVersion} is that this version is sortable.
- * With ordering, we can determine a minimum version when the code using deprecations will break.
- */
-public interface DeprecatedSemverVersion extends DeprecatedVersion {
-
-    String getMajor();
-
-    @Nullable
-    String getMinor();
-
-    @Nullable
-    String getPatch();
-
+public interface InternalDeprecationBuilder extends DeprecateGenericSpec, DeprecateMethodGenericSpec, DeprecateBehaviorGenericSpec {
 }

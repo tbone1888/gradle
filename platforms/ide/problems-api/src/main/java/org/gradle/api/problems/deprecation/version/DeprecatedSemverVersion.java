@@ -14,17 +14,24 @@
  * limitations under the License.
  */
 
-package org.gradle.api.problems;
+package org.gradle.api.problems.deprecation.version;
 
-import org.gradle.api.Action;
+import javax.annotation.Nullable;
 
 /**
- * Specialized reporter for deprecation problems.
- *
- * @since 8.12
+ * Semantic version of a deprecated feature.
+ * <p>
+ * One significant difference between this and {@link OpaqueDeprecatedVersion} is that this version is sortable.
+ * With ordering, we can determine a minimum version when the code using deprecations will break.
  */
-public interface DeprecationReporter {
+public interface DeprecatedSemverVersion extends DeprecatedVersion {
 
-    void deprecate(Action<DeprecationSpec> spec);
+    String getMajor();
+
+    @Nullable
+    String getMinor();
+
+    @Nullable
+    String getPatch();
 
 }

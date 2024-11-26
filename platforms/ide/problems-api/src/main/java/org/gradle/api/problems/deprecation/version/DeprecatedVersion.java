@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.gradle.api.problems;
+package org.gradle.api.problems.deprecation.version;
 
 public interface DeprecatedVersion {
 }

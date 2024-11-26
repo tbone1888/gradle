@@ -14,21 +14,7 @@
  * limitations under the License.
  */
 
-package org.gradle.api.problems.internal;
+package org.gradle.api.problems.deprecation.spec;
 
-import org.gradle.api.problems.DeprecationSpec;
-import org.gradle.problems.buildtree.ProblemStream;
-
-import javax.annotation.Nullable;
-
-public class DefaultDeprecationBuilder implements DeprecationSpec {
-
-    private final DefaultProblemBuilder delegate;
-
-    public DefaultDeprecationBuilder(@Nullable ProblemStream problemStream, AdditionalDataBuilderFactory additionalDataBuilderFactory) {
-        this.delegate = new DefaultProblemBuilder(problemStream, additionalDataBuilderFactory);
-    }
-
-
-
+public interface DeprecateMethodGenericSpec extends DeprecateGenericSpec {
 }

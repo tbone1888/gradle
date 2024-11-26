@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-package org.gradle.api.problems;
+package org.gradle.api.problems.deprecation.spec;
 
-public interface DeprecationProblemGroup extends ProblemGroup {
+public interface DeprecateGenericSpec {
+
+    DeprecateGenericSpec withLabel(String label);
+    DeprecateGenericSpec withDetails(String details);
+
 }

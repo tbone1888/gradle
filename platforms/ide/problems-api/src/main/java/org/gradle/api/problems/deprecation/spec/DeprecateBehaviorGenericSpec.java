@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-package org.gradle.api.problems;
+package org.gradle.api.problems.deprecation.spec;
 
-public interface GenericDeprecationSpec {
-
-
-
+public interface DeprecateBehaviorGenericSpec extends DeprecateGenericSpec {
 }
