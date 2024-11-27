@@ -16,6 +16,9 @@
 
 package org.gradle.api.problems.deprecation;
 
+import org.gradle.api.Incubating;
+
+@Incubating
 public enum DeprecationType {
 
     /**

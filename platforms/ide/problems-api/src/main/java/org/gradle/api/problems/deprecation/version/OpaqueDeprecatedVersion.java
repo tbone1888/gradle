@@ -16,6 +16,8 @@
 
 package org.gradle.api.problems.deprecation.version;
 
+import org.gradle.api.Incubating;
+
 import javax.annotation.Nullable;
 
 /**
@@ -24,6 +26,7 @@ import javax.annotation.Nullable;
  * Keep in mind that using this version in a deprecation will
  * when the code using a unit (e.g. plugin, build file, etc.) will stop working.
  */
+@Incubating
 public interface OpaqueDeprecatedVersion extends DeprecatedVersion {
 
     @Nullable

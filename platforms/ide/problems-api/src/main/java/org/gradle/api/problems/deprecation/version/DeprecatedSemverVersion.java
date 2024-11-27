@@ -16,6 +16,8 @@
 
 package org.gradle.api.problems.deprecation.version;
 
+import org.gradle.api.Incubating;
+
 import javax.annotation.Nullable;
 
 /**
@@ -24,6 +26,7 @@ import javax.annotation.Nullable;
  * One significant difference between this and {@link OpaqueDeprecatedVersion} is that this version is sortable.
  * With ordering, we can determine a minimum version when the code using deprecations will break.
  */
+@Incubating
 public interface DeprecatedSemverVersion extends DeprecatedVersion {
 
     String getMajor();

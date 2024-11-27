@@ -17,6 +17,7 @@
 package org.gradle.api.problems.deprecation;
 
 import org.gradle.api.Action;
+import org.gradle.api.Incubating;
 import org.gradle.api.problems.deprecation.spec.DeprecateBehaviorGenericSpec;
 import org.gradle.api.problems.deprecation.spec.DeprecateGenericSpec;
 import org.gradle.api.problems.deprecation.spec.DeprecateMethodGenericSpec;
@@ -27,6 +28,7 @@ import org.gradle.api.problems.internal.Problem;
  *
  * @since 8.12
  */
+@Incubating
 public interface DeprecationReporter {
 
     /**

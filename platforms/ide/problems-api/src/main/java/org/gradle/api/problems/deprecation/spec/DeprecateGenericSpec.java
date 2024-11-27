@@ -16,6 +16,9 @@
 
 package org.gradle.api.problems.deprecation.spec;
 
+import org.gradle.api.Incubating;
+
+@Incubating
 public interface DeprecateGenericSpec {
 
     DeprecateGenericSpec withLabel(String label);

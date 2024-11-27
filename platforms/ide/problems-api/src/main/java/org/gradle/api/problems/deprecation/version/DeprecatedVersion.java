@@ -16,5 +16,8 @@
 
 package org.gradle.api.problems.deprecation.version;
 
+import org.gradle.api.Incubating;
+
+@Incubating
 public interface DeprecatedVersion {
 }
