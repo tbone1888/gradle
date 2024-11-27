@@ -17,7 +17,9 @@
 package org.gradle.api.problems.internal;
 
 import org.gradle.api.Action;
+import org.gradle.api.problems.ProblemGroup;
 import org.gradle.api.problems.ProblemSpec;
+import org.gradle.api.problems.Severity;
 
 import javax.annotation.Nullable;
 
@@ -51,4 +53,46 @@ public interface InternalProblemSpec extends ProblemSpec {
      * @return this
      */
     InternalProblemSpec documentedAt(@Nullable DocLink doc);
+
+    @Override
+    InternalProblemSpec id(String name, String displayName);
+
+    @Override
+    InternalProblemSpec id(String name, String displayName, ProblemGroup parent);
+
+    @Override
+    InternalProblemSpec contextualLabel(String contextualLabel);
+
+    @Override
+    InternalProblemSpec documentedAt(String url);
+
+    @Override
+    InternalProblemSpec fileLocation(String path);
+
+    @Override
+    InternalProblemSpec lineInFileLocation(String path, int line);
+
+    @Override
+    InternalProblemSpec lineInFileLocation(String path, int line, int column);
+
+    @Override
+    InternalProblemSpec lineInFileLocation(String path, int line, int column, int length);
+
+    @Override
+    InternalProblemSpec offsetInFileLocation(String path, int offset, int length);
+
+    @Override
+    InternalProblemSpec stackLocation();
+
+    @Override
+    InternalProblemSpec details(String details);
+
+    @Override
+    InternalProblemSpec solution(String solution);
+
+    @Override
+    InternalProblemSpec withException(Throwable t);
+
+    @Override
+    InternalProblemSpec severity(Severity severity);
 }

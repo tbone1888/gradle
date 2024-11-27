@@ -16,6 +16,10 @@
 
 package org.gradle.api.problems.internal;
 
+import org.gradle.api.Action;
+import org.gradle.api.problems.ProblemGroup;
+import org.gradle.api.problems.Severity;
+
 public interface InternalProblemBuilder extends InternalProblemSpec {
 
     /**
@@ -24,4 +28,52 @@ public interface InternalProblemBuilder extends InternalProblemSpec {
      * @return the new problem
      */
     Problem build();
+
+    @Override
+    InternalProblemBuilder id(String name, String displayName);
+
+    @Override
+    InternalProblemBuilder id(String name, String displayName, ProblemGroup parent);
+
+    @Override
+    InternalProblemBuilder taskPathLocation(String buildTreePath);
+
+    @Override
+    InternalProblemBuilder documentedAt(DocLink doc);
+
+    @Override
+    InternalProblemBuilder contextualLabel(String contextualLabel);
+
+    @Override
+    InternalProblemBuilder documentedAt(String url);
+
+    @Override
+    InternalProblemBuilder fileLocation(String path);
+
+    @Override
+    InternalProblemBuilder lineInFileLocation(String path, int line);
+
+    @Override
+    InternalProblemBuilder lineInFileLocation(String path, int line, int column, int length);
+
+    @Override
+    InternalProblemBuilder offsetInFileLocation(String path, int offset, int length);
+
+    @Override
+    InternalProblemBuilder stackLocation();
+
+    @Override
+    InternalProblemBuilder details(String details);
+
+    @Override
+    InternalProblemBuilder solution(String solution);
+
+    @Override
+    <U extends AdditionalDataSpec> InternalProblemBuilder additionalData(Class<? extends U> specType, Action<? super U> config);
+
+    @Override
+    InternalProblemBuilder withException(Throwable t);
+
+    @Override
+    InternalProblemBuilder severity(Severity severity);
 }
