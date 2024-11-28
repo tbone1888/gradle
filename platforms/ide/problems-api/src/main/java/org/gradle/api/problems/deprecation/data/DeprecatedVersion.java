@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.gradle.api.problems.deprecation.version;
+package org.gradle.api.problems.deprecation.data;
 
 import org.gradle.api.Incubating;
 
