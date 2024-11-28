@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.gradle.api.problems.deprecation.version;
+package org.gradle.api.problems.deprecation.data;
 
 import org.gradle.api.Incubating;
 
@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
  * With ordering, we can determine a minimum version when the code using deprecations will break.
  */
 @Incubating
-public interface DeprecatedSemverVersion extends DeprecatedVersion {
+public interface SemverDeprecatedVersion extends DeprecatedVersion {
 
     String getMajor();
 
