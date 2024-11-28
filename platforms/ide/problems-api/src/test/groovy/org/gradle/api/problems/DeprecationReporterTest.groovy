@@ -17,6 +17,7 @@
 package org.gradle.api.problems
 
 import org.gradle.api.problems.deprecation.DeprecationReporter
+import org.gradle.api.problems.internal.Problem
 import org.gradle.util.TestUtil
 import spock.lang.Specification
 
@@ -29,10 +30,32 @@ class DeprecationReporterTest extends Specification {
         reporter = problems.deprecationReporter
     }
 
-    def "deprecate"() {
-        reporter.deprecate {
-
+    def "deprecate generic"() {
+        when:
+        def problem = reporter.deprecate {
+            it.withReason("This is a generic deprecation")
+            it.withDetails("""
+                This is a generic deprecation,
+                with a longer description.
+            """.stripIndent())
         }
+
+        then:
+        problem instanceof Problem
+        verifyAll(problem.definition.id) {
+            it.name == "generic"
+            it.displayName == "Generic deprecation"
+            verifyAll(it.group) {
+                it.name == "deprecation"
+                it.displayName == "Deprecation"
+            }
+        }
+
+        problem.contextualLabel == "This is a generic deprecation"
+        problem.details == """
+            This is a generic deprecation,
+            with a longer description.
+        """.stripIndent()
     }
 
     def "deprecate behavior"() {
