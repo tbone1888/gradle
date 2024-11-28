@@ -16,7 +16,7 @@
 
 package org.gradle.api.problems.internal.deprecation.version;
 
-import org.gradle.api.problems.deprecation.version.OpaqueDeprecatedVersion;
+import org.gradle.api.problems.deprecation.data.OpaqueDeprecatedVersion;
 
 import javax.annotation.Nullable;
 
