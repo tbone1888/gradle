@@ -14,10 +14,17 @@
  * limitations under the License.
  */
 
-package org.gradle.api.problems.deprecation.spec;
+package org.gradle.api.problems.internal.deprecation;
 
-import org.gradle.api.Incubating;
+import org.gradle.api.problems.deprecation.DeprecateBehaviorSpec;
+import org.gradle.api.problems.internal.GradleCoreProblemGroup;
+import org.gradle.api.problems.internal.InternalProblemBuilder;
 
-@Incubating
-public interface DeprecateMethodGenericSpec extends DeprecateGenericSpec {
+public class DefaultDeprecateBehaviorBuilder extends DefaultCommonDeprecationBuilder<DeprecateBehaviorSpec> implements DeprecateBehaviorSpec {
+
+    public DefaultDeprecateBehaviorBuilder(InternalProblemBuilder builder) {
+        super(builder);
+        builder.id("generic", "Generic deprecation", GradleCoreProblemGroup.deprecation());
+    }
+
 }

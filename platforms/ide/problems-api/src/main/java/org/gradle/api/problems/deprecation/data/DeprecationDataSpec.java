@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.gradle.api.problems.deprecation.spec;
+package org.gradle.api.problems.deprecation.data;
 
 import org.gradle.api.Incubating;
+import org.gradle.api.problems.deprecation.data.version.DeprecatedVersion;
+import org.gradle.api.problems.internal.AdditionalDataSpec;
 
 @Incubating
-public interface DeprecateGenericSpec {
-
-    DeprecateGenericSpec withLabel(String label);
-    DeprecateGenericSpec withDetails(String details);
-
+public interface DeprecationDataSpec extends AdditionalDataSpec {
+    DeprecationDataSpec type(DeprecationType type);
+    DeprecationDataSpec removedIn(DeprecatedVersion version);
 }

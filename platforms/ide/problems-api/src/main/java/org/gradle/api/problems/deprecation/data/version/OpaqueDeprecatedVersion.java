@@ -14,11 +14,22 @@
  * limitations under the License.
  */
 
-package org.gradle.api.problems.internal.deprecation;
+package org.gradle.api.problems.deprecation.data.version;
 
-import org.gradle.api.problems.deprecation.spec.DeprecateBehaviorGenericSpec;
-import org.gradle.api.problems.deprecation.spec.DeprecateGenericSpec;
-import org.gradle.api.problems.deprecation.spec.DeprecateMethodGenericSpec;
+import org.gradle.api.Incubating;
 
-public interface InternalDeprecationBuilder extends DeprecateGenericSpec, DeprecateMethodGenericSpec, DeprecateBehaviorGenericSpec {
+import javax.annotation.Nullable;
+
+/**
+ * Non-semantic version of a deprecated feature using an opaque string.
+ * <p>
+ * Keep in mind that using this version in a deprecation will
+ * when the code using a unit (e.g. plugin, build file, etc.) will stop working.
+ */
+@Incubating
+public interface OpaqueDeprecatedVersion extends DeprecatedVersion {
+
+    @Nullable
+    String getVersion();
+
 }

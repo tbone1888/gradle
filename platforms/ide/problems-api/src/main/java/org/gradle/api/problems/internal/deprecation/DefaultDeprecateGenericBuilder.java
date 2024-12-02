@@ -14,25 +14,17 @@
  * limitations under the License.
  */
 
-package org.gradle.api.problems.internal.deprecation.version;
+package org.gradle.api.problems.internal.deprecation;
 
-import org.gradle.api.problems.deprecation.data.version.OpaqueDeprecatedVersion;
+import org.gradle.api.problems.deprecation.DeprecateGenericSpec;
+import org.gradle.api.problems.internal.GradleCoreProblemGroup;
+import org.gradle.api.problems.internal.InternalProblemBuilder;
 
-import javax.annotation.Nullable;
+public class DefaultDeprecateGenericBuilder extends DefaultCommonDeprecationBuilder<DeprecateGenericSpec> implements DeprecateGenericSpec {
 
-public class DefaultOpaqueDeprecatedVersion implements OpaqueDeprecatedVersion {
-
-    private final String version;
-
-    public DefaultOpaqueDeprecatedVersion(String version) {
-        this.version = version;
-    }
-
-    @Nullable
-    @Override
-    public String getVersion() {
-        return version;
+    public DefaultDeprecateGenericBuilder(InternalProblemBuilder builder) {
+        super(builder);
+        builder.id("generic", "Generic deprecation", GradleCoreProblemGroup.deprecation());
     }
 
 }
-

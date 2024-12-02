@@ -18,9 +18,6 @@ package org.gradle.api.problems.deprecation;
 
 import org.gradle.api.Action;
 import org.gradle.api.Incubating;
-import org.gradle.api.problems.deprecation.spec.DeprecateBehaviorGenericSpec;
-import org.gradle.api.problems.deprecation.spec.DeprecateGenericSpec;
-import org.gradle.api.problems.deprecation.spec.DeprecateMethodGenericSpec;
 import org.gradle.api.problems.internal.Problem;
 
 /**
@@ -34,11 +31,13 @@ public interface DeprecationReporter {
     /**
      * Generic deprecation.
      * <p>
-     * Catch-all deprecation for when no other deprecation type fits.
+     * <b>Note:</b> this is a catch-all deprecation for when no other deprecation type fits.
+     * Please use a more specific deprecation type if possible.
      *
+     * @param reason a short one-line description why the deprecation is happening
      * @param spec a spec to configure the deprecation
      */
-    Problem deprecate(Action<DeprecateGenericSpec> spec);
+    Problem deprecate(String reason, Action<DeprecateGenericSpec> spec);
 
     /**
      * Deprecate a behavior.
@@ -50,27 +49,27 @@ public interface DeprecationReporter {
      * a wide range of types, a behavior deprecation is fitting to declare that the
      * method should not be used with a specific type anymore.
      *
-     * @param behavior a short one-line description of the behavior
+     * @param reason a short one-line description why the behavior is deprecated
      * @param spec a spec to configure the deprecation
      */
-    Problem deprecateBehavior(String behavior, Action<DeprecateBehaviorGenericSpec> spec);
+    Problem deprecateBehavior(String reason, Action<DeprecateBehaviorSpec> spec);
 
-    /**
-     * Deprecates the current method.
-     *
-     * @param spec a spec to configure the deprecation
-     */
-    Problem deprecateMethod(Action<DeprecateMethodGenericSpec> spec);
-
-    /**
-     * Deprecate a given method.
-     * <p>
-     * Representation of the signature is created by the called.
-     *
-     * @param method the method to deprecate
-     * @param spec a spec to configure the deprecation
-     */
-    Problem deprecateMethod(String method, Action<DeprecateMethodGenericSpec> spec);
+//    /**
+//     * Deprecates the current method.
+//     *
+//     * @param spec a spec to configure the deprecation
+//     */
+//    Problem deprecateMethod(Action<DeprecateMethodSpec> spec);
+//
+//    /**
+//     * Deprecate a given method.
+//     * <p>
+//     * Representation of the signature is created by the called.
+//     *
+//     * @param method the method to deprecate
+//     * @param spec a spec to configure the deprecation
+//     */
+//    Problem deprecateMethod(String method, Action<DeprecateMethodSpec> spec);
 
 
 }

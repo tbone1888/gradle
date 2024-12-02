@@ -16,30 +16,30 @@
 
 package org.gradle.api.problems.internal.deprecation.version;
 
-import org.gradle.api.problems.deprecation.data.SemverDeprecatedVersion;
+import org.gradle.api.problems.deprecation.data.version.SemverDeprecatedVersion;
 
 import javax.annotation.Nullable;
 
 public class DefaultSemverDeprecatedVersion implements SemverDeprecatedVersion {
 
-    private final String major;
-    private final String minor;
+    private final Integer major;
+    private final Integer minor;
     private final String patch;
 
-    public DefaultSemverDeprecatedVersion(String major, String minor, String patch) {
+    public DefaultSemverDeprecatedVersion(Integer major, Integer minor, String patch) {
         this.major = major;
         this.minor = minor;
         this.patch = patch;
     }
 
     @Override
-    public String getMajor() {
+    public Integer getMajor() {
         return major;
     }
 
     @Nullable
     @Override
-    public String getMinor() {
+    public Integer getMinor() {
         return minor;
     }
 

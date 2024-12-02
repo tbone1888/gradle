@@ -17,10 +17,9 @@
 package org.gradle.api.problems.internal.deprecation;
 
 import org.gradle.api.Action;
+import org.gradle.api.problems.deprecation.DeprecateBehaviorSpec;
+import org.gradle.api.problems.deprecation.DeprecateGenericSpec;
 import org.gradle.api.problems.deprecation.DeprecationReporter;
-import org.gradle.api.problems.deprecation.spec.DeprecateBehaviorGenericSpec;
-import org.gradle.api.problems.deprecation.spec.DeprecateGenericSpec;
-import org.gradle.api.problems.deprecation.spec.DeprecateMethodGenericSpec;
 import org.gradle.api.problems.internal.DefaultProblemBuilder;
 import org.gradle.api.problems.internal.DefaultProblemReporter;
 import org.gradle.api.problems.internal.GradleCoreProblemGroup;
@@ -35,34 +34,25 @@ public class DefaultDeprecationReporter implements DeprecationReporter {
     }
 
     @Override
-    public Problem deprecate(Action<DeprecateGenericSpec> spec) {
+    public Problem deprecate(String reason, Action<DeprecateGenericSpec> spec) {
         DefaultProblemBuilder builder = reporter.createProblemBuilder();
         builder.id("generic", "Generic deprecation", GradleCoreProblemGroup.deprecation());
-        spec.execute(builder);
-        return builder.build();
+        builder.contextualLabel(reason);
+        spec.execute(new DefaultDeprecateGenericBuilder(builder));
+        Problem problem = builder.build();
+        reporter.report(problem);
+        return problem;
     }
 
     @Override
-    public Problem deprecateBehavior(String behavior, Action<DeprecateBehaviorGenericSpec> spec) {
+    public Problem deprecateBehavior(String reason, Action<DeprecateBehaviorSpec> spec) {
         DefaultProblemBuilder builder = reporter.createProblemBuilder();
         builder.id("behavior", "Behavior deprecation", GradleCoreProblemGroup.deprecation());
-        spec.execute(builder);
-        return builder.build();
+        builder.contextualLabel(reason);
+        spec.execute(new DefaultDeprecateBehaviorBuilder(builder));
+        Problem problem = builder.build();
+        reporter.report(problem);
+        return problem;
     }
 
-    @Override
-    public Problem deprecateMethod(Action<DeprecateMethodGenericSpec> spec) {
-        DefaultProblemBuilder builder = reporter.createProblemBuilder();
-        builder.id("method", "Method deprecation", GradleCoreProblemGroup.deprecation());
-        spec.execute(builder);
-        return builder.build();
-    }
-
-    @Override
-    public Problem deprecateMethod(String method, Action<DeprecateMethodGenericSpec> spec) {
-        DefaultProblemBuilder builder = reporter.createProblemBuilder();
-        builder.id("method", "Method deprecation", GradleCoreProblemGroup.deprecation());
-        spec.execute(builder);
-        return builder.build();
-    }
 }
