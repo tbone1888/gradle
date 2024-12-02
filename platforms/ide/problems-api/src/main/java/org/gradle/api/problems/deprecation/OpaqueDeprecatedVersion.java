@@ -14,27 +14,22 @@
  * limitations under the License.
  */
 
-package org.gradle.api.problems.deprecation.data.version;
+package org.gradle.api.problems.deprecation;
 
 import org.gradle.api.Incubating;
 
 import javax.annotation.Nullable;
 
 /**
- * Semantic version of a deprecated feature.
+ * Non-semantic version of a deprecated feature using an opaque string.
  * <p>
- * One significant difference between this and {@link OpaqueDeprecatedVersion} is that this version is sortable.
- * With ordering, we can determine a minimum version when the code using deprecations will break.
+ * Keep in mind that using this version in a deprecation will
+ * when the code using a unit (e.g. plugin, build file, etc.) will stop working.
  */
 @Incubating
-public interface SemverDeprecatedVersion extends DeprecatedVersion {
-
-    Integer getMajor();
+public interface OpaqueDeprecatedVersion extends DeprecatedVersion {
 
     @Nullable
-    Integer getMinor();
-
-    @Nullable
-    String getPatch();
+    String getVersion();
 
 }

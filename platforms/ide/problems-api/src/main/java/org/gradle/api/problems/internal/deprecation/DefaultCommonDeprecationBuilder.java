@@ -18,10 +18,9 @@ package org.gradle.api.problems.internal.deprecation;
 
 import org.gradle.api.Action;
 import org.gradle.api.problems.deprecation.CommonDeprecationSpec;
-import org.gradle.api.problems.deprecation.data.DeprecationDataSpec;
+import org.gradle.api.problems.deprecation.DeprecationDataSpec;
+import org.gradle.api.problems.deprecation.DeprecationType;
 import org.gradle.api.problems.internal.InternalProblemBuilder;
-import org.gradle.api.problems.internal.deprecation.version.DefaultOpaqueDeprecatedVersion;
-import org.gradle.api.problems.internal.deprecation.version.DefaultSemverDeprecatedVersion;
 
 import javax.annotation.Nullable;
 
@@ -43,13 +42,35 @@ class DefaultCommonDeprecationBuilder<T extends CommonDeprecationSpec<?>> implem
     }
 
     @Override
-    public T withDetails(String details) {
-        builder.details(details);
+    public T removed() {
+        builder.additionalData(
+            DeprecationDataSpec.class,
+            new Action<DeprecationDataSpec>() {
+                @Override
+                public void execute(DeprecationDataSpec deprecationDataSpec) {
+                    deprecationDataSpec.type(DeprecationType.REMOVAL);
+                }
+            }
+        );
         return (T)this;
     }
 
     @Override
-    public T removedIn(final String opaqueVersion) {
+    public T replacedBy(final String replacement) {
+        builder.additionalData(
+            DeprecationDataSpec.class,
+            new Action<DeprecationDataSpec>() {
+                @Override
+                public void execute(DeprecationDataSpec deprecationDataSpec) {
+                    deprecationDataSpec.type(DeprecationType.REPLACEMENT);
+                }
+            }
+        );
+        return (T)this;
+    }
+
+    @Override
+    public T inVersion(final String opaqueVersion) {
         builder.additionalData(
             DeprecationDataSpec.class,
             new Action<DeprecationDataSpec>() {
@@ -63,7 +84,7 @@ class DefaultCommonDeprecationBuilder<T extends CommonDeprecationSpec<?>> implem
     }
 
     @Override
-    public T removedIn(final Integer major, @Nullable final Integer minor, @Nullable final String patch) {
+    public T inVersion(final Integer major, @Nullable final Integer minor, @Nullable final String patch) {
         builder.additionalData(
             DeprecationDataSpec.class,
             new Action<DeprecationDataSpec>() {
@@ -73,6 +94,26 @@ class DefaultCommonDeprecationBuilder<T extends CommonDeprecationSpec<?>> implem
                 }
             }
         );
+        return (T)this;
+    }
+
+    @Override
+    public T because(final String reason) {
+        builder.additionalData(
+            DeprecationDataSpec.class,
+            new Action<DeprecationDataSpec>() {
+                @Override
+                public void execute(DeprecationDataSpec deprecationDataSpec) {
+                    deprecationDataSpec.reason(reason);
+                }
+            }
+        );
+        return (T)this;
+    }
+
+    @Override
+    public T withDetails(String details) {
+        builder.details(details);
         return (T)this;
     }
 

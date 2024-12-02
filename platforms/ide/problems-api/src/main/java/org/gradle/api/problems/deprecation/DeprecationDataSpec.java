@@ -14,25 +14,14 @@
  * limitations under the License.
  */
 
-package org.gradle.api.problems.internal.deprecation.version;
+package org.gradle.api.problems.deprecation;
 
-import org.gradle.api.problems.deprecation.data.version.OpaqueDeprecatedVersion;
+import org.gradle.api.Incubating;
+import org.gradle.api.problems.internal.AdditionalDataSpec;
 
-import javax.annotation.Nullable;
-
-public class DefaultOpaqueDeprecatedVersion implements OpaqueDeprecatedVersion {
-
-    private final String version;
-
-    public DefaultOpaqueDeprecatedVersion(String version) {
-        this.version = version;
-    }
-
-    @Nullable
-    @Override
-    public String getVersion() {
-        return version;
-    }
-
+@Incubating
+public interface DeprecationDataSpec extends AdditionalDataSpec {
+    DeprecationDataSpec type(DeprecationType type);
+    DeprecationDataSpec removedIn(DeprecatedVersion version);
+    DeprecationDataSpec reason(String reason);
 }
-

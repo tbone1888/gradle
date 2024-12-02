@@ -34,10 +34,9 @@ public interface DeprecationReporter {
      * <b>Note:</b> this is a catch-all deprecation for when no other deprecation type fits.
      * Please use a more specific deprecation type if possible.
      *
-     * @param reason a short one-line description why the deprecation is happening
      * @param spec a spec to configure the deprecation
      */
-    Problem deprecate(String reason, Action<DeprecateGenericSpec> spec);
+    Problem deprecate(Action<DeprecateGenericSpec> spec);
 
     /**
      * Deprecate a behavior.
@@ -49,10 +48,9 @@ public interface DeprecationReporter {
      * a wide range of types, a behavior deprecation is fitting to declare that the
      * method should not be used with a specific type anymore.
      *
-     * @param reason a short one-line description why the behavior is deprecated
      * @param spec a spec to configure the deprecation
      */
-    Problem deprecateBehavior(String reason, Action<DeprecateBehaviorSpec> spec);
+    Problem deprecateBehavior(Action<DeprecateBehaviorSpec> spec);
 
 //    /**
 //     * Deprecates the current method.

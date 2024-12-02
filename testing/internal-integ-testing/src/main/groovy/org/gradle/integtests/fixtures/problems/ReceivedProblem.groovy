@@ -35,6 +35,7 @@ import org.gradle.api.problems.internal.ProblemLocation
 /*
  * A deserialized representation of a problem received from the build operation trace.
  */
+
 @CompileStatic
 class ReceivedProblem implements Problem {
     private final long operationId
@@ -51,7 +52,7 @@ class ReceivedProblem implements Problem {
         this.operationId = operationId
         this.definition = new ReceivedProblemDefinition(problemDetails['definition'] as Map<String, Object>)
         this.contextualLabel = problemDetails['contextualLabel'] as String
-        this.details =  problemDetails['details'] as String
+        this.details = problemDetails['details'] as String
         this.solutions = problemDetails['solutions'] as List<String>
         this.originLocations = fromList(problemDetails['originLocations'] as List<Object>)
         this.contextualLocations = fromList(problemDetails['contextualLocations'] as List<Object>)
@@ -102,12 +103,12 @@ class ReceivedProblem implements Problem {
 
     @Override
     String getContextualLabel() {
-       contextualLabel
+        contextualLabel
     }
 
     @Override
     String getDetails() {
-       details
+        details
     }
 
     @Override
@@ -129,13 +130,13 @@ class ReceivedProblem implements Problem {
         def location = originLocations.find {
             locationType.isInstance(it)
         }
-        assert location != null : "Expected a location of type $locationType, but found none."
+        assert location != null: "Expected a location of type $locationType, but found none."
         return locationType.cast(location)
     }
 
     @Override
     ReceivedAdditionalData getAdditionalData() {
-       additionalData
+        additionalData
     }
 
     @Override
@@ -156,7 +157,7 @@ class ReceivedProblem implements Problem {
         ReceivedProblemDefinition(Map<String, Object> definition) {
             id = new ReceivedProblemId(definition['id'] as Map<String, Object>)
             severity = Severity.valueOf(definition['severity'] as String)
-            documentationLink = definition['documentationLink'] ==  null ? null : new ReceivedDocumentationLink(definition['documentationLink'] as Map<String, Object>)
+            documentationLink = definition['documentationLink'] == null ? null : new ReceivedDocumentationLink(definition['documentationLink'] as Map<String, Object>)
         }
 
         @Override
@@ -179,32 +180,16 @@ class ReceivedProblem implements Problem {
         private final String name
         private final String displayName
         private final ReceivedProblemGroup group
-        private final String fqid
 
         ReceivedProblemId(Map<String, Object> id) {
             name = id['name'] as String
             displayName = id['displayName'] as String
             group = new ReceivedProblemGroup(id['group'] as Map<String, Object>)
-            fqid = fqid(id)
-        }
-
-        private static String fqid(Map<String, Object> id) {
-            String result = id['name']
-            def parent = id['group']
-            while (parent != null) {
-                result = "${parent['name']}:$result"
-                parent = parent['parent']
-            }
-            result
-        }
-
-        String getFqid() {
-            fqid
         }
 
         @Override
         String getName() {
-           name
+            name
         }
 
         @Override
@@ -215,6 +200,16 @@ class ReceivedProblem implements Problem {
         @Override
         ReceivedProblemGroup getGroup() {
             group
+        }
+
+        String getFqid() {
+            List<String> groupNames = [name]
+            ReceivedProblemGroup parentGroup = group
+            while (parentGroup != null) {
+                groupNames << parentGroup.name
+                parentGroup = parentGroup.parent
+            }
+            return groupNames.reverse().join(':')
         }
     }
 

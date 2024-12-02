@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package org.gradle.api.problems.deprecation.data.version;
+package org.gradle.api.problems.deprecation;
 
 import org.gradle.api.Incubating;
 
 @Incubating
-public interface DeprecatedVersion {
+public enum DeprecationType {
+    REMOVAL,
+    REPLACEMENT
 }

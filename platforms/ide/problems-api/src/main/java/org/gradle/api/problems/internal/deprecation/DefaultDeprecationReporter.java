@@ -34,10 +34,9 @@ public class DefaultDeprecationReporter implements DeprecationReporter {
     }
 
     @Override
-    public Problem deprecate(String reason, Action<DeprecateGenericSpec> spec) {
+    public Problem deprecate(Action<DeprecateGenericSpec> spec) {
         DefaultProblemBuilder builder = reporter.createProblemBuilder();
         builder.id("generic", "Generic deprecation", GradleCoreProblemGroup.deprecation());
-        builder.contextualLabel(reason);
         spec.execute(new DefaultDeprecateGenericBuilder(builder));
         Problem problem = builder.build();
         reporter.report(problem);
@@ -45,10 +44,9 @@ public class DefaultDeprecationReporter implements DeprecationReporter {
     }
 
     @Override
-    public Problem deprecateBehavior(String reason, Action<DeprecateBehaviorSpec> spec) {
+    public Problem deprecateBehavior(Action<DeprecateBehaviorSpec> spec) {
         DefaultProblemBuilder builder = reporter.createProblemBuilder();
         builder.id("behavior", "Behavior deprecation", GradleCoreProblemGroup.deprecation());
-        builder.contextualLabel(reason);
         spec.execute(new DefaultDeprecateBehaviorBuilder(builder));
         Problem problem = builder.build();
         reporter.report(problem);

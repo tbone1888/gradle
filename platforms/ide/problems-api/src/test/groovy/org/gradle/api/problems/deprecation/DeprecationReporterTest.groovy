@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.gradle.api.problems
+package org.gradle.api.problems.deprecation
 
-import org.gradle.api.problems.deprecation.DeprecationReporter
+import org.gradle.api.problems.Problems
 import org.gradle.api.problems.internal.Problem
 import org.gradle.util.TestUtil
 import spock.lang.Specification
@@ -32,8 +32,7 @@ class DeprecationReporterTest extends Specification {
 
     def "deprecate generic"() {
         when:
-        def problem = reporter.deprecate {
-            it.withReason("This is a generic deprecation")
+        def problem = reporter.deprecate("This is a generic deprecation") {
             it.withDetails("""
                 This is a generic deprecation,
                 with a longer description.
@@ -59,19 +58,24 @@ class DeprecationReporterTest extends Specification {
     }
 
     def "deprecate behavior"() {
-        reporter.deprecateBehavior("This shouldn't called with that anymore") {
-
+        when:
+        def problem = reporter.deprecateBehavior("This is a behavior deprecation") {
+            it.withDetails("""
+                This is a behavior deprecation,
+                with a longer description.
+            """.stripIndent())
         }
-    }
 
-    def "deprecate this method"() {
-        reporter.deprecateMethod() {
-
+        then:
+        problem instanceof Problem
+        verifyAll(problem.definition.id) {
+            it.name == "behavior"
+            it.displayName == "Behavior deprecation"
+            verifyAll(it.group) {
+                it.name == "deprecation"
+                it.displayName == "Deprecation"
+            }
         }
-    }
-
-    def "deprecate other method"() {
-
     }
 
 }

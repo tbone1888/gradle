@@ -19,13 +19,20 @@ package org.gradle.api.problems.deprecation;
 import javax.annotation.Nullable;
 
 public interface CommonDeprecationSpec<T extends CommonDeprecationSpec<?>> {
+
     /**
-     * A longer, possibly multi-line description of the deprecation.
+     * Declares that there is no replacement for the deprecated behavior.
      *
-     * @param details the details of the deprecation
      * @return the fluent builder used to call this
      */
-    T withDetails(String details);
+    T removed();
+
+    /**
+     * Declares the replacement for the deprecated behavior.
+     * @param replacement the replacement for the deprecated behavior
+     * @return the fluent builder used to call this
+     */
+    T replacedBy(String replacement);
 
     /**
      * Declares from what opaqueVersion the deprecated behavior will be removed.
@@ -36,7 +43,7 @@ public interface CommonDeprecationSpec<T extends CommonDeprecationSpec<?>> {
      * @param opaqueVersion the version from which the deprecated behavior will be removed. E.g. "version-1.2.3"
      * @return the fluent builder used to call this
      */
-    T removedIn(String opaqueVersion);
+    T inVersion(String opaqueVersion);
 
     /**
      * Declares from what version the deprecated behavior will be removed.
@@ -48,5 +55,19 @@ public interface CommonDeprecationSpec<T extends CommonDeprecationSpec<?>> {
      * @param patch the patch version from which the deprecated behavior will be removed
      * @return the fluent builder used to call this
      */
-    T removedIn(Integer major, @Nullable Integer minor, @Nullable String patch);
+    T inVersion(Integer major, @Nullable Integer minor, @Nullable String patch);
+
+    /**
+     * Declares an optional reasoning why the deprecation is happening.
+     * @return the fluent builder used to call this
+     */
+    T because(String reason);
+
+    /**
+     * A longer, possibly multi-line description of the deprecation.
+     *
+     * @param details the details of the deprecation
+     * @return the fluent builder used to call this
+     */
+    T withDetails(String details);
 }

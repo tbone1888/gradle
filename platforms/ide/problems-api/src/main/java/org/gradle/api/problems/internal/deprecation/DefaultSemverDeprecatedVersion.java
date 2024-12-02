@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.gradle.api.problems.internal.deprecation.version;
+package org.gradle.api.problems.internal.deprecation;
 
-import org.gradle.api.problems.deprecation.data.version.SemverDeprecatedVersion;
+import org.gradle.api.problems.deprecation.SemverDeprecatedVersion;
 
 import javax.annotation.Nullable;
 
