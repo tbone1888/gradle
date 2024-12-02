@@ -22,16 +22,16 @@ import javax.annotation.Nullable;
 
 public class DefaultOpaqueDeprecatedVersion implements OpaqueDeprecatedVersion {
 
-    private final String version;
+    private final String opaqueVersion;
 
-    public DefaultOpaqueDeprecatedVersion(String version) {
-        this.version = version;
+    public DefaultOpaqueDeprecatedVersion(String opaqueVersion) {
+        this.opaqueVersion = opaqueVersion;
     }
 
     @Nullable
     @Override
-    public String getVersion() {
-        return version;
+    public String getOpaqueVersion() {
+        return opaqueVersion;
     }
 
 }

@@ -16,10 +16,12 @@
 
 package org.gradle.api.problems.deprecation;
 
-import org.gradle.api.Incubating;
+import org.gradle.api.problems.internal.AdditionalData;
 
-@Incubating
-public enum DeprecationType {
-    REMOVAL,
-    REPLACEMENT
+import javax.annotation.Nullable;
+
+public interface DeprecationData extends AdditionalData {
+    @Nullable DeprecatedVersion getRemovedIn();
+    @Nullable String getReplacedBy();
+    @Nullable String getBecause();
 }

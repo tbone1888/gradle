@@ -62,7 +62,7 @@ class DeprecationReporterIntegrationTest extends AbstractIntegrationSpec {
             import org.gradle.api.Plugin;
             import org.gradle.api.Project;
             import org.gradle.api.problems.Problems;
-            import org.gradle.api.problems.deprecation.DeprecationReporter;
+
             import javax.inject.Inject;
 
             public abstract class DeprecationPlugin implements Plugin<Project> {
@@ -72,9 +72,11 @@ class DeprecationReporterIntegrationTest extends AbstractIntegrationSpec {
                 @Override
                 public void apply(Project project) {
                     // Report the plugin as deprecated
-                    getProblems().getDeprecationReporter().deprecate(feature -> {
-                        feature.removed();
-                    });
+                    getProblems().getDeprecationReporter().deprecate("This plugin is deprecated", feature -> feature
+                            .because("We decided to remove it")
+                            .inVersion("2.0.0")
+                            .replacedBy("plugin-other")
+                    );
                 }
             }
             """)
@@ -87,7 +89,11 @@ class DeprecationReporterIntegrationTest extends AbstractIntegrationSpec {
         def deprecation = receivedProblem
         deprecation.definition.id.fqid == "deprecation:generic"
         deprecation.contextualLabel == "This plugin is deprecated"
-        deprecation.additionalData["removedIn"] == "2.0.0"
+        verifyAll(deprecation.additionalData.asMap) {
+            it["because"] == "We decided to remove it"
+            it["replacedBy"] == "plugin-other"
+            it["removedIn"]["opaqueVersion"] == "2.0.0"
+        }
     }
 
 }

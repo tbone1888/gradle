@@ -29,12 +29,12 @@ import javax.annotation.Nullable;
 @Incubating
 public interface SemverDeprecatedVersion extends DeprecatedVersion {
 
-    Integer getMajor();
+    Integer getSemverMajor();
 
     @Nullable
-    Integer getMinor();
+    Integer getSemverMinor();
 
     @Nullable
-    String getPatch();
+    String getSemverPatch();
 
 }

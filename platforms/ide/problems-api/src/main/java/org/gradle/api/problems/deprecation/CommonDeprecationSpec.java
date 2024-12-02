@@ -19,14 +19,6 @@ package org.gradle.api.problems.deprecation;
 import javax.annotation.Nullable;
 
 public interface CommonDeprecationSpec<T extends CommonDeprecationSpec<?>> {
-
-    /**
-     * Declares that there is no replacement for the deprecated behavior.
-     *
-     * @return the fluent builder used to call this
-     */
-    T removed();
-
     /**
      * Declares the replacement for the deprecated behavior.
      * @param replacement the replacement for the deprecated behavior

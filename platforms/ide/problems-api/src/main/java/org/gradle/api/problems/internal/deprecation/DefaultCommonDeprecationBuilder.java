@@ -19,7 +19,6 @@ package org.gradle.api.problems.internal.deprecation;
 import org.gradle.api.Action;
 import org.gradle.api.problems.deprecation.CommonDeprecationSpec;
 import org.gradle.api.problems.deprecation.DeprecationDataSpec;
-import org.gradle.api.problems.deprecation.DeprecationType;
 import org.gradle.api.problems.internal.InternalProblemBuilder;
 
 import javax.annotation.Nullable;
@@ -42,27 +41,13 @@ class DefaultCommonDeprecationBuilder<T extends CommonDeprecationSpec<?>> implem
     }
 
     @Override
-    public T removed() {
-        builder.additionalData(
-            DeprecationDataSpec.class,
-            new Action<DeprecationDataSpec>() {
-                @Override
-                public void execute(DeprecationDataSpec deprecationDataSpec) {
-                    deprecationDataSpec.type(DeprecationType.REMOVAL);
-                }
-            }
-        );
-        return (T)this;
-    }
-
-    @Override
     public T replacedBy(final String replacement) {
         builder.additionalData(
             DeprecationDataSpec.class,
             new Action<DeprecationDataSpec>() {
                 @Override
                 public void execute(DeprecationDataSpec deprecationDataSpec) {
-                    deprecationDataSpec.type(DeprecationType.REPLACEMENT);
+                    deprecationDataSpec.replacedBy(replacement);
                 }
             }
         );
@@ -104,7 +89,7 @@ class DefaultCommonDeprecationBuilder<T extends CommonDeprecationSpec<?>> implem
             new Action<DeprecationDataSpec>() {
                 @Override
                 public void execute(DeprecationDataSpec deprecationDataSpec) {
-                    deprecationDataSpec.reason(reason);
+                    deprecationDataSpec.because(reason);
                 }
             }
         );

@@ -21,7 +21,7 @@ import org.gradle.api.problems.internal.AdditionalDataSpec;
 
 @Incubating
 public interface DeprecationDataSpec extends AdditionalDataSpec {
-    DeprecationDataSpec type(DeprecationType type);
     DeprecationDataSpec removedIn(DeprecatedVersion version);
-    DeprecationDataSpec reason(String reason);
+    DeprecationDataSpec replacedBy(String reason);
+    DeprecationDataSpec because(String reason);
 }

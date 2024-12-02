@@ -33,19 +33,19 @@ public class DefaultSemverDeprecatedVersion implements SemverDeprecatedVersion {
     }
 
     @Override
-    public Integer getMajor() {
+    public Integer getSemverMajor() {
         return major;
     }
 
     @Nullable
     @Override
-    public Integer getMinor() {
+    public Integer getSemverMinor() {
         return minor;
     }
 
     @Nullable
     @Override
-    public String getPatch() {
+    public String getSemverPatch() {
         return patch;
     }
 }

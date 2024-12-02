@@ -34,9 +34,10 @@ public interface DeprecationReporter {
      * <b>Note:</b> this is a catch-all deprecation for when no other deprecation type fits.
      * Please use a more specific deprecation type if possible.
      *
-     * @param spec a spec to configure the deprecation
+     * @param label a label for the deprecation; it should state the deprecation, but not the reason (e.g. "Plugin 'plugin' is deprecated")
+     * @param feature a spec to configure the deprecation
      */
-    Problem deprecate(Action<DeprecateGenericSpec> spec);
+    Problem deprecate(String label, Action<DeprecateGenericSpec> feature);
 
     /**
      * Deprecate a behavior.
@@ -48,9 +49,10 @@ public interface DeprecationReporter {
      * a wide range of types, a behavior deprecation is fitting to declare that the
      * method should not be used with a specific type anymore.
      *
-     * @param spec a spec to configure the deprecation
+     * @param label a label for the deprecation; it should state the deprecation, but not the reason (e.g. "Using Object as a parameter is deprecated")
+     * @param feature a spec to configure the deprecation
      */
-    Problem deprecateBehavior(Action<DeprecateBehaviorSpec> spec);
+    Problem deprecateBehavior(String label, Action<DeprecateBehaviorSpec> feature);
 
 //    /**
 //     * Deprecates the current method.
