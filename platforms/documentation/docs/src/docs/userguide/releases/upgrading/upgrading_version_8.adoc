@@ -48,6 +48,11 @@ The embedded Kotlin has been updated from 2.0.20 to link:https://github.com/JetB
 
 Ant has been updated to https://github.com/apache/ant/blob/rel/1.10.15/WHATSNEW[Ant 1.10.15].
 
+=== Swift SDK discovery
+
+To determine the location of the Mac OS X SDK for Swift, Gradle now passes the `--sdk macosx` arguments to `xcrun`.
+This is necessary because the SDK could be discovered inconsistently without this argument across different environments.
+
 === Deprecations
 
 [[init_must_run_alone]]
@@ -487,7 +492,7 @@ We added a check to automatically disable file-system watching on macOS 11 (Big 
 
 ==== Possible change to JDK8-based compiler output when annotation processors are used
 
-The Java compilation infrastructure has been updated to use the <<implementing_gradle_plugins_binary.adoc#reporting_problems,Problems API>>.
+The Java compilation infrastructure has been updated to use the <<implementing_gradle_plugins_binary.adoc#sec:reporting_problems,Problems API>>.
 This change will supply the Tooling API clients with structured, rich information about compilation issues.
 
 The feature should not have any visible impact on the usual build output, with JDK8 being an exception.
