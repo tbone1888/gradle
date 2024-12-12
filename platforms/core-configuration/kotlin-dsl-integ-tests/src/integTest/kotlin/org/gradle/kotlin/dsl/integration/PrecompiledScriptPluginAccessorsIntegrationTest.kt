@@ -95,7 +95,7 @@ class PrecompiledScriptPluginAccessorsIntegrationTest : AbstractKotlinIntegratio
             """
         )
 
-        build("clean")
+        build("clean", "--stacktrace", "-Dorg.gradle.debug=true")
 
         build("clean", "--rerun-tasks")
     }
