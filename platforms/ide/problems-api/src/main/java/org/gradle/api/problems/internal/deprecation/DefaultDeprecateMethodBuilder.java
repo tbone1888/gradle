@@ -16,12 +16,13 @@
 
 package org.gradle.api.problems.internal.deprecation;
 
-import org.gradle.api.problems.deprecation.DeprecateBehaviorSpec;
+import org.gradle.api.problems.deprecation.DeprecateGenericSpec;
+import org.gradle.api.problems.deprecation.DeprecateMethodSpec;
 import org.gradle.api.problems.internal.GradleCoreProblemGroup;
 import org.gradle.api.problems.internal.InternalProblemBuilder;
 
-public class DefaultDeprecateBehaviorBuilder extends DefaultCommonDeprecationBuilder<DeprecateBehaviorSpec> implements DeprecateBehaviorSpec {
-    public DefaultDeprecateBehaviorBuilder(InternalProblemBuilder builder) {
+public class DefaultDeprecateMethodBuilder extends DefaultCommonDeprecationBuilder<DeprecateMethodSpec> implements DeprecateMethodSpec {
+    public DefaultDeprecateMethodBuilder(InternalProblemBuilder builder) {
         super(builder);
     }
 }

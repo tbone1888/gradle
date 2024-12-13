@@ -17,13 +17,11 @@
 package org.gradle.api.problems.deprecation;
 
 
-import org.gradle.integtests.fixtures.AbstractIntegrationSpec;
+import org.gradle.integtests.fixtures.AbstractIntegrationSpec
 
 class DeprecationReporterIntegrationTest extends AbstractIntegrationSpec {
 
-    def "can report simple deprecation"() {
-        given:
-        // settings.gradle.kts
+    def setup() {
         settingsFile("""
             includeBuild("deprecation-plugin")
         """)
@@ -38,7 +36,6 @@ class DeprecationReporterIntegrationTest extends AbstractIntegrationSpec {
                 }
             }
         """)
-        // build.gradle.kts
         buildFile("deprecation-plugin/build.gradle", """
             plugins {
                 id 'java-gradle-plugin'
@@ -57,7 +54,49 @@ class DeprecationReporterIntegrationTest extends AbstractIntegrationSpec {
                 }
             }
         """)
-        // Plugin class for deprecation
+    }
+
+    def "can report generic deprecation"() {
+        given:
+        javaFile("deprecation-plugin/src/main/java/DeprecationPlugin.java", """
+            import org.gradle.api.Plugin;
+import org.gradle.api.Project;
+import org.gradle.api.problems.Problems;
+
+import javax.inject.Inject;
+
+            public abstract class DeprecationPlugin implements Plugin<Project> {
+                @Inject
+                public abstract Problems getProblems();
+
+                @Override
+                public void apply(Project project) {
+                    // Report the plugin as deprecated
+                    getProblems()
+                        .getDeprecationReporter()
+                        .deprecate("Generic deprecation", feature -> feature
+                            .because("Reasoning of removal")
+                            .inVersion("2.0.0")
+                            .replacedBy("newMethod(String, String)")
+                        );
+                }
+            }
+            """)
+
+        then:
+        def deprecation = receivedProblem
+        deprecation.definition.id.fqid == "deprecation:generic"
+        deprecation.contextualLabel == "This plugin is deprecated"
+        verifyAll(deprecation.additionalData.asMap) {
+            it["because"] == "Reasoning of removal"
+            it["replacedBy"] == "newMethod(String, String)"
+            it["removedIn"]["opaqueVersion"] == "2.0.0"
+
+        }
+    }
+
+    def "can report method deprecation"() {
+        given:
         javaFile("deprecation-plugin/src/main/java/DeprecationPlugin.java", """
             import org.gradle.api.Plugin;
             import org.gradle.api.Project;
@@ -72,8 +111,46 @@ class DeprecationReporterIntegrationTest extends AbstractIntegrationSpec {
                 @Override
                 public void apply(Project project) {
                     // Report the plugin as deprecated
-                    getProblems().getDeprecationReporter().deprecate("This plugin is deprecated", feature -> feature
-                            .because("We decided to remove it")
+                    getProblems().getDeprecationReporter().deprecate("oldMethod", feature -> feature
+                        .because("Reasoning of removal")
+                        .inVersion("2.0.0")
+                        .replacedBy("newMethod(String, String)")
+                    );
+                }
+            }
+            """)
+
+        then:
+        def deprecation = receivedProblem
+        deprecation.definition.id.fqid == "deprecation:method"
+        deprecation.contextualLabel == "This method is deprecated"
+        verifyAll(deprecation.additionalData.asMap) {
+            it["because"] == "Reasoning of removal"
+            it["replacedBy"] == "newMethod(String, String)"
+            it["removedIn"]["opaqueVersion"] == "2.0.0"
+        }
+    }
+
+    def "can report plugin deprecation"() {
+        given:
+        javaFile("deprecation-plugin/src/main/java/DeprecationPlugin.java", """
+            import org.gradle.api.Plugin;
+            import org.gradle.api.Project;
+            import org.gradle.api.problems.Problems;
+
+            import javax.inject.Inject;
+
+            public abstract class DeprecationPlugin implements Plugin<Project> {
+                @Inject
+                public abstract Problems getProblems();
+
+                @Override
+                public void apply(Project project) {
+                    // Report the plugin as deprecated
+                    getProblems()
+                        .getDeprecationReporter()
+                        .deprecatePlugin("this-plugin-id", feature -> feature
+                            .because("Reasoning of removal")
                             .inVersion("2.0.0")
                             .replacedBy("plugin-other")
                     );
@@ -90,7 +167,7 @@ class DeprecationReporterIntegrationTest extends AbstractIntegrationSpec {
         deprecation.definition.id.fqid == "deprecation:generic"
         deprecation.contextualLabel == "This plugin is deprecated"
         verifyAll(deprecation.additionalData.asMap) {
-            it["because"] == "We decided to remove it"
+            it["because"] == "Reasoning of removal"
             it["replacedBy"] == "plugin-other"
             it["removedIn"]["opaqueVersion"] == "2.0.0"
         }

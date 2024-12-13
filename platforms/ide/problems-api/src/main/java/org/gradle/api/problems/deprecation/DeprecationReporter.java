@@ -29,47 +29,47 @@ import org.gradle.api.problems.internal.Problem;
 public interface DeprecationReporter {
 
     /**
-     * Generic deprecation.
-     * <p>
-     * <b>Note:</b> this is a catch-all deprecation for when no other deprecation type fits.
-     * Please use a more specific deprecation type if possible.
+     * Generic deprecation
      *
-     * @param label a label for the deprecation; it should state the deprecation, but not the reason (e.g. "Plugin 'plugin' is deprecated")
+     * @param message a message for the deprecation; it should state the deprecation, but not the reason (e.g. "Plugin 'plugin' is deprecated")
      * @param feature a spec to configure the deprecation
+     * @return a problem representing the deprecation
      */
-    Problem deprecate(String label, Action<DeprecateGenericSpec> feature);
+    Problem deprecate(String message, Action<DeprecateGenericSpec> feature);
 
     /**
-     * Deprecate a behavior.
-     * <p>
-     * Behaviors should be used when the unit of code is not deprecated itself,
-     * but the usage is.
-     * <p>
-     * For example, when a method accepts {@link Object} as a parameter to support
-     * a wide range of types, a behavior deprecation is fitting to declare that the
-     * method should not be used with a specific type anymore.
+     * Deprecates the <i>current</i> method.
      *
-     * @param label a label for the deprecation; it should state the deprecation, but not the reason (e.g. "Using Object as a parameter is deprecated")
-     * @param feature a spec to configure the deprecation
+     * @param spec a spec to configure the deprecation
+     * @return a problem representing the deprecation
      */
-    Problem deprecateBehavior(String label, Action<DeprecateBehaviorSpec> feature);
+    Problem deprecateMethod(Action<DeprecateMethodSpec> spec);
 
-//    /**
-//     * Deprecates the current method.
-//     *
-//     * @param spec a spec to configure the deprecation
-//     */
-//    Problem deprecateMethod(Action<DeprecateMethodSpec> spec);
-//
-//    /**
-//     * Deprecate a given method.
-//     * <p>
-//     * Representation of the signature is created by the called.
-//     *
-//     * @param method the method to deprecate
-//     * @param spec a spec to configure the deprecation
-//     */
-//    Problem deprecateMethod(String method, Action<DeprecateMethodSpec> spec);
+    /**
+     * Deprecates a given method.
+     * <p>
+     * Representation of the signature is created by the called.
+     *
+     * @param spec a spec to configure the deprecation
+     * @return a problem representing the deprecation
+     */
+    Problem deprecateMethod(String method, Action<DeprecateMethodSpec> spec);
+
+    /**
+     * Deprecates the <i>current</i> plugin.
+     *
+     * @param spec a spec to configure the deprecation
+     * @return a problem representing the deprecation
+     */
+    Problem deprecatePlugin(Action<DeprecatePluginSpec> spec);
+
+    /**
+     * Deprecates a given plugin.
+     *
+     * @param pluginId the id of the plugin to deprecate
+     * @param spec a spec to configure the deprecation
+     */
+    Problem deprecatePlugin(String pluginId, Action<DeprecatePluginSpec> spec);
 
 
 }

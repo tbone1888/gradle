@@ -17,14 +17,10 @@
 package org.gradle.api.problems.internal.deprecation;
 
 import org.gradle.api.problems.deprecation.DeprecateGenericSpec;
-import org.gradle.api.problems.internal.GradleCoreProblemGroup;
 import org.gradle.api.problems.internal.InternalProblemBuilder;
 
 public class DefaultDeprecateGenericBuilder extends DefaultCommonDeprecationBuilder<DeprecateGenericSpec> implements DeprecateGenericSpec {
-
     public DefaultDeprecateGenericBuilder(InternalProblemBuilder builder) {
         super(builder);
-        builder.id("generic", "Generic deprecation", GradleCoreProblemGroup.deprecation());
     }
-
 }
