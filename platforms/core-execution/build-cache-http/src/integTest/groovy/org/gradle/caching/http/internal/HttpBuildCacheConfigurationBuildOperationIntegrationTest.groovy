@@ -56,7 +56,7 @@ class HttpBuildCacheConfigurationBuildOperationIntegrationTest extends AbstractI
                 }
                 remote(org.gradle.caching.http.HttpBuildCache) {
                     enabled = true
-                    url = uri("$url")
+                    url = "$url"
                     push = $push
                     $credentials
                 }
@@ -104,7 +104,7 @@ class HttpBuildCacheConfigurationBuildOperationIntegrationTest extends AbstractI
             buildCache {
                 remote(org.gradle.caching.http.HttpBuildCache) {
                     enabled = true
-                    url = uri("${basicAuthUri}/")
+                    url = "${basicAuthUri}/"
                 }
             }
         """
@@ -127,7 +127,7 @@ class HttpBuildCacheConfigurationBuildOperationIntegrationTest extends AbstractI
             buildCache {
                 remote(org.gradle.caching.http.HttpBuildCache) {
                     enabled = true
-                    url = uri("$url/")
+                    url = "$url/"
                 }
             }
         """
@@ -148,7 +148,7 @@ class HttpBuildCacheConfigurationBuildOperationIntegrationTest extends AbstractI
             buildCache {
                 remote(org.gradle.caching.http.HttpBuildCache) {
                     enabled = false
-                    url = uri("$url/")
+                    url = "$url/"
                 }
             }
         """
@@ -194,7 +194,7 @@ class HttpBuildCacheConfigurationBuildOperationIntegrationTest extends AbstractI
             buildCache {
                 remote(org.gradle.caching.http.HttpBuildCache) {
                     enabled = true
-                    url = uri("$url")
+                    url = "$url"
                     useExpectContinue = true
                 }
             }

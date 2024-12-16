@@ -76,6 +76,13 @@ public abstract class HttpBuildCache extends AbstractBuildCache {
     public abstract Property<URI> getUrl();
 
     /**
+     * Sets the URL of the cache. The URL must end in a '/'.
+     */
+    public void setUrl(String url) throws URISyntaxException {
+        getUrl().set(URI.create(url));
+    }
+
+    /**
      * Returns the credentials used to access the HTTP cache backend.
      */
     @Nested
@@ -190,11 +197,6 @@ public abstract class HttpBuildCache extends AbstractBuildCache {
         @BytecodeUpgrade
         static void setUrl(HttpBuildCache buildCache, @Nullable URI url) {
             buildCache.getUrl().set(url);
-        }
-
-        @BytecodeUpgrade
-        static void setUrl(HttpBuildCache buildCache, String url) {
-            buildCache.getUrl().set(URI.create(url));
         }
 
         @BytecodeUpgrade
