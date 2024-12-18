@@ -39,7 +39,12 @@ final class DefaultMutableAttributeContainer extends AbstractAttributeContainer 
     private final DefaultAttributesFactory attributesFactory;
 
     private final MapProperty<Attribute<?>, Isolatable<?>> state;
-    private boolean realizingAttributes;
+
+    /**
+     * Should only be true when realizing lazy attributes, to protect against reentrant
+     * mutation of this container.
+     */
+    private boolean realizingLazyState;
 
     public DefaultMutableAttributeContainer(DefaultAttributesFactory attributesFactory, PropertyFactory propertyFactory) {
         this.attributesFactory = attributesFactory;
@@ -49,13 +54,13 @@ final class DefaultMutableAttributeContainer extends AbstractAttributeContainer 
     @Override
     public String toString() {
         final Map<Attribute<?>, Object> sorted = new TreeMap<>(Comparator.comparing(Attribute::getName));
-        sorted.putAll(getRealizedMap());
+        sorted.putAll(getRealizedAttributes());
         return sorted.toString();
     }
 
     @Override
     public Set<Attribute<?>> keySet() {
-        return getRealizedMap().keySet();
+        return getRealizedAttributes().keySet();
     }
 
     @Override
@@ -95,16 +100,16 @@ final class DefaultMutableAttributeContainer extends AbstractAttributeContainer 
 
     private <T> void checkInsertionAllowed(Attribute<T> key) {
         // TODO: This check should be handled by the provider API infrastructure
-        if (realizingAttributes) {
+        if (realizingLazyState) {
             throw new IllegalStateException("Cannot add new attribute '" + key.getName() + "' while realizing all attributes of the container.");
         }
     }
 
-    private Map<Attribute<?>, Isolatable<?>> getRealizedMap() {
-        Map<Attribute<?>, Isolatable<?>> realizedMap = doRealizeAttributes();
+    private Map<Attribute<?>, Isolatable<?>> getRealizedAttributes() {
+        Map<Attribute<?>, Isolatable<?>> realizedState = realizedDeclaredState();
 
         Map<String, Attribute<?>> attributesByName = new HashMap<>();
-        for (Map.Entry<Attribute<?>, Isolatable<?>> entry : realizedMap.entrySet()) {
+        for (Map.Entry<Attribute<?>, Isolatable<?>> entry : realizedState.entrySet()) {
             Attribute<?> attribute = entry.getKey();
             String name = attribute.getName();
             Attribute<?> existing = attributesByName.put(name, attribute);
@@ -115,15 +120,15 @@ final class DefaultMutableAttributeContainer extends AbstractAttributeContainer 
             }
         }
 
-        return realizedMap;
+        return realizedState;
     }
 
-    private Map<Attribute<?>, Isolatable<?>> doRealizeAttributes() {
-        realizingAttributes = true;
+    private Map<Attribute<?>, Isolatable<?>> realizedDeclaredState() {
+        realizingLazyState = true;
         try {
             return state.get();
         } finally {
-            realizingAttributes = false;
+            realizingLazyState = false;
         }
     }
 
@@ -152,7 +157,7 @@ final class DefaultMutableAttributeContainer extends AbstractAttributeContainer 
 
     @Override
     public ImmutableAttributes asImmutable() {
-        return attributesFactory.fromMap(getRealizedMap());
+        return attributesFactory.fromMap(getRealizedAttributes());
     }
 
     @Override
