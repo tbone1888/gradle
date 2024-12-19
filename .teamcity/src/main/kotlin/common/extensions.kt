@@ -188,6 +188,7 @@ fun BuildType.paramsForBuildToolBuild(buildJvm: Jvm = BuildToolBuildJvm, os: Os,
         if (os == Os.LINUX || os == Os.MACOS) {
             param("env.LC_ALL", "en_US.UTF-8")
         }
+        param("teamcity.internal.gradle.runner.launch.mode", "auto") // see https://youtrack.jetbrains.com/issue/TW-71916/Support-configuration-cache-in-the-Gradle-runner#focus=Comments-27-8333400.0-0
     }
 }
 
@@ -240,7 +241,6 @@ fun buildToolGradleParameters(isContinue: Boolean = true, maxParallelForks: Stri
         "-PmaxParallelForks=$maxParallelForks",
         pluginPortalUrlOverride,
         "-s",
-        "--no-configuration-cache",
         "%additional.gradle.parameters%",
         if (isContinue) "--continue" else ""
     )
