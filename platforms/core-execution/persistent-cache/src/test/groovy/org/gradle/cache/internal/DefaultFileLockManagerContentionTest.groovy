@@ -24,6 +24,7 @@ import org.gradle.cache.internal.filelock.DefaultLockOptions
 import org.gradle.cache.internal.locklistener.DefaultFileLockContentionHandler
 import org.gradle.cache.internal.locklistener.FileLockContentionHandler
 import org.gradle.cache.internal.locklistener.InetAddressProvider
+import org.gradle.cache.internal.locklistener.UnixDomainSocketFileCommunicatorProvider
 import org.gradle.internal.concurrent.CompositeStoppable
 import org.gradle.internal.remote.internal.inet.InetAddressFactory
 import org.gradle.test.fixtures.concurrent.ConcurrentSpec
@@ -50,8 +51,9 @@ class DefaultFileLockManagerContentionTest extends ConcurrentSpec {
             return addressFactory.communicationAddresses
         }
     }
-    FileLockContentionHandler contentionHandler = new DefaultFileLockContentionHandler(executorFactory, addressProvider)
-    FileLockContentionHandler contentionHandler2 = new DefaultFileLockContentionHandler(executorFactory, addressProvider)
+    UnixDomainSocketFileCommunicatorProvider communicatorProvider = new UnixDomainSocketFileCommunicatorProvider((pid) -> "${getClass().getSimpleName()}-test-${pid}.sock".toString())
+    FileLockContentionHandler contentionHandler = new DefaultFileLockContentionHandler(executorFactory, addressProvider, communicatorProvider)
+    FileLockContentionHandler contentionHandler2 = new DefaultFileLockContentionHandler(executorFactory, addressProvider, communicatorProvider)
     FileLockManager manager = new DefaultFileLockManager(Stub(ProcessMetaDataProvider), 2000, contentionHandler)
     FileLockManager manager2 = new DefaultFileLockManager(Stub(ProcessMetaDataProvider), 2000, contentionHandler2)
 

@@ -27,7 +27,7 @@ import static org.gradle.test.fixtures.ConcurrentTestUtil.poll
 
 class UnixDomainSocketFileLockCommunicatorTest extends ConcurrentSpecification {
 
-    def communicator = new UnixDomainSocketFileLockCommunicator(new File("."))
+    def communicator = new UnixDomainSocketFileLockCommunicator((pid) -> "${getClass().getSimpleName()}-test-${pid}.sock".toString())
 
     def cleanup() {
         communicator.stop()
@@ -82,7 +82,7 @@ class UnixDomainSocketFileLockCommunicatorTest extends ConcurrentSpecification {
         }
 
         when:
-        def socket = UnixDomainSocketFileLockCommunicator.unixDomainSocketAddressOf(communicator.getPort())
+        def socket = communicator.unixDomainSocketAddressOf(communicator.getPort())
         def bytes = [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 155] as byte[]
         try (SocketChannel clientChannel = SocketChannel.open(socket)) {
             clientChannel.write(ByteBuffer.wrap(bytes));

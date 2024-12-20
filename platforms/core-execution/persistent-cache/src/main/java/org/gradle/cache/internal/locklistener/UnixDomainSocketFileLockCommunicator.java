@@ -33,6 +33,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Set;
+import java.util.function.Function;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.gradle.cache.internal.locklistener.FileLockPacketType.LOCK_RELEASE_CONFIRMATION;
@@ -51,13 +52,17 @@ public class UnixDomainSocketFileLockCommunicator implements FileLockCommunicato
     private final long pid;
     private final SocketAddress thisProcessAddress;
     private final ServerSocketChannel serverChannel;
-    @SuppressWarnings({"FieldCanBeLocal", "unused"})
-    private final File gradleUserHomeDir;
+    private final Function<Long, String> socketFileNameGenerator;
     private volatile boolean stopped;
 
-    public UnixDomainSocketFileLockCommunicator(File gradleUserHomeDir) {
+    public UnixDomainSocketFileLockCommunicator() {
+        this(pid -> "gradle-" + pid + ".sock");
+    }
+
+    @VisibleForTesting
+    UnixDomainSocketFileLockCommunicator(Function<Long, String> socketFileNameGenerator) {
         this.pid = getCurrentPid();
-        this.gradleUserHomeDir = gradleUserHomeDir;
+        this.socketFileNameGenerator = socketFileNameGenerator;
         this.thisProcessAddress = unixDomainSocketAddressOf((int) pid);
         this.serverChannel = openAndBindServerSocketChannel(thisProcessAddress);
     }
@@ -167,14 +172,14 @@ public class UnixDomainSocketFileLockCommunicator implements FileLockCommunicato
     }
 
     @VisibleForTesting
-    static SocketAddress unixDomainSocketAddressOf(int ownerPort) {
+    SocketAddress unixDomainSocketAddressOf(int ownerPort) {
         // TODO: Where to put domain sockets? If we put them in gradleUserHomeDir, we can get
         //  java.net.SocketException: Unix domain path too long
         File unixDomainSocketsDir = new File("/tmp/gradle");
         if (!unixDomainSocketsDir.exists()) {
             unixDomainSocketsDir.mkdir();
         }
-        Path address = new File(unixDomainSocketsDir, "gradle-" + ownerPort + ".sock").toPath();
+        Path address = new File(unixDomainSocketsDir, socketFileNameGenerator.apply((long) ownerPort)).toPath();
         return UnixDomainSocketUtil.unixDomainSocketAddressOf(address);
     }
 

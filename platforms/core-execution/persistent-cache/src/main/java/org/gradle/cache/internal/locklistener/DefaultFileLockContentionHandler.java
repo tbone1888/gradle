@@ -24,7 +24,6 @@ import org.gradle.internal.concurrent.Stoppable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.net.SocketAddress;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -85,15 +84,17 @@ public class DefaultFileLockContentionHandler implements FileLockContentionHandl
 
     private final ExecutorFactory executorFactory;
     private final InetAddressProvider inetAddressProvider;
+    private final UnixDomainSocketFileCommunicatorProvider unixDomainSocketFileCommunicatorProvider;
 
     private FileLockCommunicator communicator;
     private ManagedExecutor fileLockRequestListener;
     private ManagedExecutor unlockActionExecutor;
     private boolean stopped;
 
-    public DefaultFileLockContentionHandler(ExecutorFactory executorFactory, InetAddressProvider inetAddressProvider) {
+    public DefaultFileLockContentionHandler(ExecutorFactory executorFactory, InetAddressProvider inetAddressProvider, UnixDomainSocketFileCommunicatorProvider unixDomainSocketFileCommunicatorProvider) {
         this.executorFactory = executorFactory;
         this.inetAddressProvider = inetAddressProvider;
+        this.unixDomainSocketFileCommunicatorProvider = unixDomainSocketFileCommunicatorProvider;
     }
 
     private Runnable listener() {
@@ -262,7 +263,7 @@ public class DefaultFileLockContentionHandler implements FileLockContentionHandl
             if (communicator == null) {
                 // TODO: Do we need some better logic here to determine which communicator to use?
                 communicator = JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_17)
-                    ? new UnixDomainSocketFileLockCommunicator(new File("."))
+                    ? unixDomainSocketFileCommunicatorProvider.getCommunicator()
                     : new InetSocketFileLockCommunicator(inetAddressProvider);
             }
             return communicator;
