@@ -24,20 +24,24 @@ import java.net.SocketAddress;
 @NonNullApi
 class FileLockPacket {
 
-    private final int port;
+    /**
+     * Unique identifier for the owner of the lock.
+     * For Inet socket, this is the port number, for Unix domain socket, this is pid + port.
+     */
+    private final String ownerId;
     private final SocketAddress socketAddress;
     private final byte[] data;
     private final int length;
 
-    private FileLockPacket(int port, SocketAddress socketAddress, byte[] data, int length) {
-        this.port = port;
+    private FileLockPacket(String ownerId, SocketAddress socketAddress, byte[] data, int length) {
+        this.ownerId = ownerId;
         this.socketAddress = socketAddress;
         this.data = data;
         this.length = length;
     }
 
-    int getPort() {
-        return port;
+    String getOwnerId() {
+        return ownerId;
     }
 
     SocketAddress getSocketAddress() {
@@ -53,11 +57,11 @@ class FileLockPacket {
     }
 
     static FileLockPacket of(DatagramPacket datagramPacket) {
-        return new FileLockPacket(datagramPacket.getPort(), datagramPacket.getSocketAddress(), datagramPacket.getData(), datagramPacket.getLength());
+        return new FileLockPacket(Integer.toString(datagramPacket.getPort()), datagramPacket.getSocketAddress(), datagramPacket.getData(), datagramPacket.getLength());
     }
 
 
-    static FileLockPacket of(byte[] packet, SocketAddress address, int port) {
-        return new FileLockPacket(port, address, packet, packet.length);
+    static FileLockPacket of(byte[] packet, SocketAddress address, String ownerId) {
+        return new FileLockPacket(ownerId, address, packet, packet.length);
     }
 }

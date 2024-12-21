@@ -20,7 +20,7 @@ import java.net.SocketAddress;
 import java.util.Set;
 
 public interface FileLockCommunicator {
-    boolean pingOwner(int ownerPort, long lockId, String displayName);
+    boolean pingOwner(String pid, int ownerPort, long lockId, String displayName);
 
     FileLockPacket receive() throws GracefullyStoppedException;
 
@@ -33,4 +33,6 @@ public interface FileLockCommunicator {
     void stop();
 
     int getPort();
+
+    String createFileLockOwnerId(String pid, int port);
 }

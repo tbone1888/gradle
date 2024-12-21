@@ -33,7 +33,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Set;
-import java.util.function.Function;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.gradle.cache.internal.locklistener.FileLockPacketType.LOCK_RELEASE_CONFIRMATION;
@@ -49,32 +49,35 @@ import static org.gradle.cache.internal.locklistener.UnixDomainSocketUtil.unixDo
 public class UnixDomainSocketFileLockCommunicator implements FileLockCommunicator {
     private static final Logger LOGGER = LoggerFactory.getLogger(UnixDomainSocketFileLockCommunicator.class);
 
+    /**
+     * In some cases we can have multiple instances of this class, let's generate an IN_PROCESS_ID to differentiate them for now.
+     *
+     * Using AtomicInteger instead of AtomicLong to keep the range in the port range that is an int.
+     */
+    private static final AtomicInteger IN_PROCESS_ID = new AtomicInteger(0);
+
     private final long pid;
+    private final int inProcessId;
     private final SocketAddress thisProcessAddress;
     private final ServerSocketChannel serverChannel;
-    private final Function<Long, String> socketFileNameGenerator;
     private volatile boolean stopped;
 
     public UnixDomainSocketFileLockCommunicator() {
-        this(pid -> "gradle-" + pid + ".sock");
-    }
-
-    @VisibleForTesting
-    UnixDomainSocketFileLockCommunicator(Function<Long, String> socketFileNameGenerator) {
         this.pid = getCurrentPid();
-        this.socketFileNameGenerator = socketFileNameGenerator;
-        this.thisProcessAddress = unixDomainSocketAddressOf((int) pid);
+        this.inProcessId = IN_PROCESS_ID.getAndIncrement();
+        this.thisProcessAddress = unixDomainSocketAddressOf(Long.toString(pid), inProcessId);
         this.serverChannel = openAndBindServerSocketChannel(thisProcessAddress);
+        unixDomainSocketPath(thisProcessAddress).toFile().deleteOnExit();
     }
 
     @Override
-    public boolean pingOwner(int ownerPort, long lockId, String displayName) {
-        SocketAddress otherProcessAddress = unixDomainSocketAddressOf(ownerPort);
+    public boolean pingOwner(String pid, int ownerPort, long lockId, String displayName) {
+        SocketAddress otherProcessAddress = unixDomainSocketAddressOf(pid, ownerPort);
         try {
             byte[] bytesToSend = FileLockPacketPayload.encode(lockId, UNLOCK_REQUEST);
             return send(otherProcessAddress, bytesToSend);
         } catch (IOException e) {
-            throw new RuntimeException(String.format("Failed to ping owner of lock for %s (my pid: %s, other pid: %s, lock id: %s)", displayName, pid, ownerPort, lockId), e);
+            throw new RuntimeException(String.format("Failed to ping owner of lock for %s (my pid: %s, other pid: %s, lock id: %s)", displayName, this.pid, ownerPort, lockId), e);
         }
     }
 
@@ -82,10 +85,12 @@ public class UnixDomainSocketFileLockCommunicator implements FileLockCommunicato
     public FileLockPacket receive() throws GracefullyStoppedException {
         try (SocketChannel channel = serverChannel.accept()) {
             byte[] bytes = readBytes(channel);
-            // Packet is [pid + bytes]
-            long pid = ByteBuffer.wrap(Arrays.copyOfRange(bytes, 0, Long.BYTES)).getLong();
-            byte[] packet = Arrays.copyOfRange(bytes, Long.BYTES, bytes.length);
-            return FileLockPacket.of(packet, unixDomainSocketAddressOf((int) pid), (int) pid);
+            // Packet is [pid + inProcessId + bytes]
+            ByteBuffer buffer = ByteBuffer.wrap(bytes);
+            String pid = Long.toString(buffer.getLong());
+            int inProcessId = buffer.getInt();
+            byte[] packet = Arrays.copyOfRange(bytes, Long.BYTES + Integer.BYTES, bytes.length);
+            return FileLockPacket.of(packet, unixDomainSocketAddressOf(pid, inProcessId), createFileLockOwnerId(pid, inProcessId));
         } catch (IOException e) {
             if (!stopped) {
                 throw new RuntimeException(e);
@@ -95,7 +100,7 @@ public class UnixDomainSocketFileLockCommunicator implements FileLockCommunicato
     }
 
     private static byte[] readBytes(SocketChannel channel) throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES + FileLockPacketPayload.MAX_BYTES);
+        ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES + Integer.BYTES + FileLockPacketPayload.MAX_BYTES);
         int bytesRead = channel.read(buffer);
         byte[] bytes = new byte[bytesRead];
         buffer.flip();
@@ -156,14 +161,17 @@ public class UnixDomainSocketFileLockCommunicator implements FileLockCommunicato
 
     @Override
     public int getPort() {
-        // This is a Unix domain socket, so there is no port, we use pid instead
-        // TODO: Use long instead of int for port
-        return stopped ? -1 : (int) pid;
+        // This is a Unix domain socket, so there is no port, we use inProcessId instead
+        return stopped ? -1 : inProcessId;
+    }
+
+    @Override
+    public String createFileLockOwnerId(String pid, int port) {
+        return pid + "-" + port;
     }
 
     private static ServerSocketChannel openAndBindServerSocketChannel(SocketAddress thisProcessAddress) {
         try {
-            System.out.println("Opening server socket channel at address: " + thisProcessAddress);
             ServerSocketChannel serverSocketChannel = UnixDomainSocketUtil.openUnixServerSocketChannel();
             return serverSocketChannel.bind(thisProcessAddress);
         } catch (IOException e) {
@@ -172,23 +180,25 @@ public class UnixDomainSocketFileLockCommunicator implements FileLockCommunicato
     }
 
     @VisibleForTesting
-    SocketAddress unixDomainSocketAddressOf(int ownerPort) {
+    SocketAddress unixDomainSocketAddressOf(String pid, int inProcessId) {
         // TODO: Where to put domain sockets? If we put them in gradleUserHomeDir, we can get
         //  java.net.SocketException: Unix domain path too long
         File unixDomainSocketsDir = new File("/tmp/gradle");
         if (!unixDomainSocketsDir.exists()) {
             unixDomainSocketsDir.mkdir();
         }
-        Path address = new File(unixDomainSocketsDir, socketFileNameGenerator.apply((long) ownerPort)).toPath();
+        String id = createFileLockOwnerId(pid, inProcessId);
+        Path address = new File(unixDomainSocketsDir, "gradle-" + id + ".sock").toPath();
         return UnixDomainSocketUtil.unixDomainSocketAddressOf(address);
     }
 
     private boolean send(SocketAddress address, byte[] bytesToSend) throws IOException {
         checkArgument(isUnixDomainSocket(address), "Only UnixDomainSocketAddress is supported, but got: %s", address.getClass().getName());
         try (SocketChannel clientChannel = SocketChannel.open(address)) {
-            // Packet is [pid + bytesToSend]
-            ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES + bytesToSend.length)
+            // Packet is [pid + inProcessId + bytesToSend]
+            ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES + Integer.BYTES + bytesToSend.length)
                 .putLong(pid)
+                .putInt(inProcessId)
                 .put(bytesToSend);
             buffer.position(0);
             return clientChannel.write(buffer) > 0;
@@ -204,7 +214,7 @@ public class UnixDomainSocketFileLockCommunicator implements FileLockCommunicato
     /**
      * This class is only used with Java17 so ProcessHandle is available, we could also get pid from environment
      */
-    private static long getCurrentPid() {
+    static long getCurrentPid() {
         try {
             // Call ProcessHandle.current().pid() to get the pid
             Object processHandle = Class.forName("java.lang.ProcessHandle").getMethod("current").invoke(null);

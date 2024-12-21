@@ -54,7 +54,7 @@ public class InetSocketFileLockCommunicator implements FileLockCommunicator {
     }
 
     @Override
-    public boolean pingOwner(int ownerPort, long lockId, String displayName) {
+    public boolean pingOwner(String pid, int ownerPort, long lockId, String displayName) {
         boolean pingSentSuccessfully = false;
         try {
             byte[] bytesToSend = FileLockPacketPayload.encode(lockId, UNLOCK_REQUEST);
@@ -149,5 +149,11 @@ public class InetSocketFileLockCommunicator implements FileLockCommunicator {
     @Override
     public int getPort() {
         return socket.getLocalPort();
+    }
+
+    @Override
+    public String createFileLockOwnerId(String pid, int port) {
+        // Port is unique for inet sockets
+        return Integer.toString(port);
     }
 }

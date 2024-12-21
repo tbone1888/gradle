@@ -16,11 +16,9 @@
 
 package org.gradle.cache.internal.locklistener;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Suppliers;
 import org.gradle.api.NonNullApi;
 
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -33,11 +31,6 @@ public class UnixDomainSocketFileCommunicatorProvider {
 
     public UnixDomainSocketFileCommunicatorProvider() {
         communicator = Suppliers.memoize(UnixDomainSocketFileLockCommunicator::new);
-    }
-
-    @VisibleForTesting
-    public UnixDomainSocketFileCommunicatorProvider(Function<Long, String> socketFileNameGenerator) {
-        communicator = Suppliers.memoize(() -> new UnixDomainSocketFileLockCommunicator(socketFileNameGenerator));
     }
 
     public UnixDomainSocketFileLockCommunicator getCommunicator() {

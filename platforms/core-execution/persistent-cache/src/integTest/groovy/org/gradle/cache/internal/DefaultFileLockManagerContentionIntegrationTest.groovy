@@ -379,7 +379,7 @@ class DefaultFileLockManagerContentionIntegrationTest extends AbstractIntegratio
             Iterable<InetAddress> getCommunicationAddresses() {
                 return addressFactory.communicationAddresses
             }
-        }, new UnixDomainSocketFileCommunicatorProvider((pid) -> "${getClass().getSimpleName()}-test-${pid}.sock".toString()))
+        }, new UnixDomainSocketFileCommunicatorProvider())
         def fileLockManager = new DefaultFileLockManager(new ProcessMetaDataProvider() {
             String getProcessIdentifier() { return "pid" }
             String getProcessDisplayName() { return "process" }

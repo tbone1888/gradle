@@ -27,7 +27,8 @@ import static org.gradle.test.fixtures.ConcurrentTestUtil.poll
 
 class UnixDomainSocketFileLockCommunicatorTest extends ConcurrentSpecification {
 
-    def communicator = new UnixDomainSocketFileLockCommunicator((pid) -> "${getClass().getSimpleName()}-test-${pid}.sock".toString())
+    String pid = UnixDomainSocketFileLockCommunicator.currentPid as String
+    def communicator = new UnixDomainSocketFileLockCommunicator()
 
     def cleanup() {
         communicator.stop()
@@ -60,7 +61,7 @@ class UnixDomainSocketFileLockCommunicatorTest extends ConcurrentSpecification {
 
         when:
         Thread.sleep(1000)
-        communicator.pingOwner(communicator.getPort(), 155, "lock")
+        communicator.pingOwner(pid, communicator.getPort(), 155, "lock")
 
         then:
         poll {
@@ -82,8 +83,9 @@ class UnixDomainSocketFileLockCommunicatorTest extends ConcurrentSpecification {
         }
 
         when:
-        def socket = communicator.unixDomainSocketAddressOf(communicator.getPort())
-        def bytes = [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 155] as byte[]
+        def socket = communicator.unixDomainSocketAddressOf(pid, communicator.getPort())
+        // Payload: [pid, inProcessId, <data>]
+        def bytes = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 155] as byte[]
         try (SocketChannel clientChannel = SocketChannel.open(socket)) {
             clientChannel.write(ByteBuffer.wrap(bytes));
         }
@@ -105,7 +107,7 @@ class UnixDomainSocketFileLockCommunicatorTest extends ConcurrentSpecification {
 
     def "pinging on a port that nobody listens is safe"() {
         when:
-        communicator.pingOwner(6666, 166, "lock")
+        communicator.pingOwner(pid, 6666, 166, "lock")
 
         then:
         noExceptionThrown()
