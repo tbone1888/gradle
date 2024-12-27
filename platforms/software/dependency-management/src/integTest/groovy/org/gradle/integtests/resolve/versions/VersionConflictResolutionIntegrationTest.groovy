@@ -33,8 +33,6 @@ class VersionConflictResolutionIntegrationTest extends AbstractIntegrationSpec {
         settingsFile << """
             rootProject.name = 'test'
         """
-        resolve.expectDefaultConfiguration("runtime")
-        resolve.addDefaultVariantDerivationStrategy()
     }
 
     void "strict conflict resolution should fail due to conflict"() {
@@ -2444,5 +2442,75 @@ dependencies {
         then:
         outputContains('excluded')
     }
+
+    @Issue("https://github.com/gradle/gradle/issues/14220#issuecomment-2008178522")
+    def "changing selection of module while deselected node that will eventually become reselected in already in queue does not cause node to be ignored"() {
+        mavenRepo.module("com.netflix.eureka", "eureka-client", "2.0.1")
+            .dependsOn(
+                mavenRepo.module("com.netflix.netflix-commons", "netflix-eventbus", "0.3.0")
+                    .dependsOn(mavenRepo.module("com.netflix.archaius", "archaius-core", "0.3.3").publish())
+                    .publish()
+            )
+            .dependsOn(mavenRepo.module("com.netflix.archaius", "archaius-core", "0.7.6").publish())
+            .publish()
+
+        mavenRepo.module("org.springframework.cloud", "spring-cloud-netflix-dependencies", "4.1.0")
+            .hasPackaging("pom")
+            .dependencyConstraint([exclusions: [[group: "com.netflix.archaius", module: "archaius-core"]]], mavenRepo.module("com.netflix.eureka", "eureka-client", "2.0.1"))
+            .publish()
+
+        settingsFile << """
+            include 'indirect'
+        """
+
+        file("indirect/build.gradle") << """
+            plugins {
+                id("java-library")
+            }
+
+            ${mavenTestRepository()}
+
+            version = "1.0"
+
+            dependencies {
+                implementation(platform("org.springframework.cloud:spring-cloud-netflix-dependencies:4.1.0"))
+            }
+        """
+
+        buildFile << """
+            plugins {
+                id("java-library")
+            }
+
+            ${mavenTestRepository()}
+
+            dependencies {
+                implementation("com.netflix.eureka:eureka-client:2.0.1")
+                implementation(project(":indirect"))
+            }
+        """
+        resolve.prepare("runtimeClasspath")
+
+        expect:
+        succeeds ':checkDeps'
+        resolve.expectGraph {
+            root(":", ":test:") {
+                module("com.netflix.eureka:eureka-client:2.0.1") {
+                    module("com.netflix.netflix-commons:netflix-eventbus:0.3.0") {
+                        module("com.netflix.archaius:archaius-core:0.3.3")
+                    }
+                }
+                project(":indirect", "test:indirect:1.0") {
+                    module("org.springframework.cloud:spring-cloud-netflix-dependencies:4.1.0") {
+                        noArtifacts()
+                        constraint("com.netflix.eureka:eureka-client:2.0.1", "com.netflix.eureka:eureka-client:2.0.1") {
+                            byConstraint()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
 }
