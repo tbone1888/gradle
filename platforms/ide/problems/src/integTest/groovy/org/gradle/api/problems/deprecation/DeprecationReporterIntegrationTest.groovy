@@ -76,7 +76,7 @@ import javax.inject.Inject;
                         .getDeprecationReporter()
                         .deprecate("Generic deprecation", feature -> feature
                             .because("Reasoning of removal")
-                            .inVersion("2.0.0")
+                            .removedInVersion("2.0.0")
                             .replacedBy("newMethod(String, String)")
                         );
                 }
@@ -113,7 +113,7 @@ import javax.inject.Inject;
                     // Report the plugin as deprecated
                     getProblems().getDeprecationReporter().deprecate("oldMethod", feature -> feature
                         .because("Reasoning of removal")
-                        .inVersion("2.0.0")
+                        .removedInVersion("2.0.0")
                         .replacedBy("newMethod(String, String)")
                     );
                 }
@@ -151,7 +151,7 @@ import javax.inject.Inject;
                         .getDeprecationReporter()
                         .deprecatePlugin("this-plugin-id", feature -> feature
                             .because("Reasoning of removal")
-                            .inVersion("2.0.0")
+                            .removedInVersion("2.0.0")
                             .replacedBy("plugin-other")
                     );
                 }

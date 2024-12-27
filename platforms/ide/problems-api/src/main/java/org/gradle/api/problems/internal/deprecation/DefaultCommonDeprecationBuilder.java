@@ -55,7 +55,7 @@ class DefaultCommonDeprecationBuilder<T extends CommonDeprecationSpec<?>> implem
     }
 
     @Override
-    public T inVersion(final String opaqueVersion) {
+    public T removedInVersion(final String opaqueVersion) {
         builder.additionalData(
             DeprecationDataSpec.class,
             new Action<DeprecationDataSpec>() {
@@ -69,7 +69,7 @@ class DefaultCommonDeprecationBuilder<T extends CommonDeprecationSpec<?>> implem
     }
 
     @Override
-    public T inVersion(final Integer major, @Nullable final Integer minor, @Nullable final String patch) {
+    public T removedInVersion(final Integer major, @Nullable final Integer minor, @Nullable final String patch) {
         builder.additionalData(
             DeprecationDataSpec.class,
             new Action<DeprecationDataSpec>() {

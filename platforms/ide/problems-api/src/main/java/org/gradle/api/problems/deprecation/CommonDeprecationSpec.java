@@ -35,7 +35,7 @@ public interface CommonDeprecationSpec<T extends CommonDeprecationSpec<?>> {
      * @param opaqueVersion the version from which the deprecated behavior will be removed. E.g. "version-1.2.3"
      * @return the fluent builder used to call this
      */
-    T inVersion(String opaqueVersion);
+    T removedInVersion(String opaqueVersion);
 
     /**
      * Declares from what version the deprecated behavior will be removed.
@@ -47,7 +47,7 @@ public interface CommonDeprecationSpec<T extends CommonDeprecationSpec<?>> {
      * @param patch the patch version from which the deprecated behavior will be removed
      * @return the fluent builder used to call this
      */
-    T inVersion(Integer major, @Nullable Integer minor, @Nullable String patch);
+    T removedInVersion(Integer major, @Nullable Integer minor, @Nullable String patch);
 
     /**
      * Declares an optional reasoning why the deprecation is happening.
