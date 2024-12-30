@@ -22,12 +22,14 @@ import org.gradle.integtests.fixtures.AbstractIntegrationSpec
 class DeprecationReporterIntegrationTest extends AbstractIntegrationSpec {
 
     def setup() {
+        enableProblemsApiCheck()
+
         settingsFile("""
             includeBuild("deprecation-plugin")
         """)
         buildFile("""
             plugins {
-                id 'deprecation-reporting-plugin'
+                id 'org.gradle.integtest.deprecation-test-plugin'
             }
 
             tasks.register('test') {
@@ -48,7 +50,7 @@ class DeprecationReporterIntegrationTest extends AbstractIntegrationSpec {
             gradlePlugin {
                 plugins {
                     deprecation {
-                        id = 'deprecation-reporting-plugin'
+                        id = 'org.gradle.integtest.deprecation-test-plugin'
                         implementationClass = 'DeprecationPlugin'
                     }
                 }
@@ -74,7 +76,7 @@ import javax.inject.Inject;
                     // Report the plugin as deprecated
                     getProblems()
                         .getDeprecationReporter()
-                        .deprecate("Generic deprecation", feature -> feature
+                        .deprecate("Generic deprecation message", feature -> feature
                             .because("Reasoning of removal")
                             .removedInVersion("2.0.0")
                             .replacedBy("newMethod(String, String)")
@@ -83,15 +85,18 @@ import javax.inject.Inject;
             }
             """)
 
+        when:
+        succeeds("help")
+
         then:
         def deprecation = receivedProblem
         deprecation.definition.id.fqid == "deprecation:generic"
-        deprecation.contextualLabel == "This plugin is deprecated"
+        deprecation.definition.id.displayName == "Deprecation"
+        deprecation.contextualLabel == "Generic deprecation message"
         verifyAll(deprecation.additionalData.asMap) {
             it["because"] == "Reasoning of removal"
             it["replacedBy"] == "newMethod(String, String)"
             it["removedIn"]["opaqueVersion"] == "2.0.0"
-
         }
     }
 
@@ -111,7 +116,7 @@ import javax.inject.Inject;
                 @Override
                 public void apply(Project project) {
                     // Report the plugin as deprecated
-                    getProblems().getDeprecationReporter().deprecate("oldMethod", feature -> feature
+                    getProblems().getDeprecationReporter().deprecateMethod("oldMethod(String, String)", feature -> feature
                         .because("Reasoning of removal")
                         .removedInVersion("2.0.0")
                         .replacedBy("newMethod(String, String)")
@@ -120,10 +125,13 @@ import javax.inject.Inject;
             }
             """)
 
+        when:
+        succeeds("help")
+
         then:
         def deprecation = receivedProblem
         deprecation.definition.id.fqid == "deprecation:method"
-        deprecation.contextualLabel == "This method is deprecated"
+        deprecation.contextualLabel == "Method 'oldMethod(String, String)' is deprecated"
         verifyAll(deprecation.additionalData.asMap) {
             it["because"] == "Reasoning of removal"
             it["replacedBy"] == "newMethod(String, String)"
@@ -159,13 +167,12 @@ import javax.inject.Inject;
             """)
 
         when:
-        enableProblemsApiCheck()
         succeeds("help")
 
         then:
         def deprecation = receivedProblem
-        deprecation.definition.id.fqid == "deprecation:generic"
-        deprecation.contextualLabel == "This plugin is deprecated"
+        deprecation.definition.id.fqid == "deprecation:plugin"
+        deprecation.contextualLabel == "Plugin 'this-plugin-id' is deprecated"
         verifyAll(deprecation.additionalData.asMap) {
             it["because"] == "Reasoning of removal"
             it["replacedBy"] == "plugin-other"

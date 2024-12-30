@@ -38,14 +38,6 @@ public interface DeprecationReporter {
     Problem deprecate(String message, Action<DeprecateGenericSpec> feature);
 
     /**
-     * Deprecates the <i>current</i> method.
-     *
-     * @param spec a spec to configure the deprecation
-     * @return a problem representing the deprecation
-     */
-    Problem deprecateMethod(Action<DeprecateMethodSpec> spec);
-
-    /**
      * Deprecates a given method.
      * <p>
      * Representation of the signature is created by the called.
@@ -56,20 +48,10 @@ public interface DeprecationReporter {
     Problem deprecateMethod(String method, Action<DeprecateMethodSpec> spec);
 
     /**
-     * Deprecates the <i>current</i> plugin.
-     *
-     * @param spec a spec to configure the deprecation
-     * @return a problem representing the deprecation
-     */
-    Problem deprecatePlugin(Action<DeprecatePluginSpec> spec);
-
-    /**
      * Deprecates a given plugin.
      *
      * @param pluginId the id of the plugin to deprecate
      * @param spec a spec to configure the deprecation
      */
     Problem deprecatePlugin(String pluginId, Action<DeprecatePluginSpec> spec);
-
-
 }

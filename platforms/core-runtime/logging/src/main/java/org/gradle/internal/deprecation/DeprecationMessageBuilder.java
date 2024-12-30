@@ -540,7 +540,7 @@ public class DeprecationMessageBuilder<T extends DeprecationMessageBuilder<T>> {
 
         @Override
         String formatSummary(String plugin) {
-            return String.format("The %s plugin has been deprecated.", plugin);
+            return String.format("The '%s' plugin has been deprecated.", plugin);
         }
 
         @Override

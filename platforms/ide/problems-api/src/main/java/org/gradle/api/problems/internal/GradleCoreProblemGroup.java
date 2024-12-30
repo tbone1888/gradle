@@ -22,6 +22,7 @@ public abstract class GradleCoreProblemGroup implements ProblemGroup {
 
     private static final DefaultCompilationProblemGroup COMPILATION_PROBLEM_GROUP = new DefaultCompilationProblemGroup("compilation", "Compilation");
     private static final DefaultProblemGroup DEPRECATION_PROBLEM_GROUP = new DefaultProblemGroup("deprecation", "Deprecation");
+    private static final DefaultProblemGroup DEPRECATION_LOGGER_GROUP = new DefaultProblemGroup("deprecation-logger", "Deprecation");
     private static final DefaultValidationProblemGroup VALIDATION_PROBLEM_GROUP = new DefaultValidationProblemGroup("validation", "Validation");
     private static final DefaultProblemGroup PLUGIN_APPLICATION_PROBLEM_GROUP = new DefaultProblemGroup("plugin-application", "Plugin application");
     private static final DefaultProblemGroup TASK_SELECTION_PROBLEM_GROUP = new DefaultProblemGroup("task-selection", "Task selection");
@@ -34,6 +35,10 @@ public abstract class GradleCoreProblemGroup implements ProblemGroup {
 
     public static ProblemGroup deprecation() {
         return DEPRECATION_PROBLEM_GROUP;
+    }
+
+    public static ProblemGroup deprecationLogger() {
+        return DEPRECATION_LOGGER_GROUP;
     }
 
     public static ValidationProblemGroup validation() {
