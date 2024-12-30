@@ -16,13 +16,24 @@
 
 package org.gradle.api.problems.deprecation;
 
+import org.gradle.api.Incubating;
+
 import javax.annotation.Nullable;
 
+/**
+ * Common specification for building deprecations
+ *
+ * @param <T> the subtype of the deprecation spec
+ * @since 8.13
+ */
+@Incubating
 public interface CommonDeprecationSpec<T extends CommonDeprecationSpec<?>> {
     /**
      * Declares the replacement for the deprecated behavior.
+     *
      * @param replacement the replacement for the deprecated behavior
      * @return the fluent builder used to call this
+     * @since 8.13
      */
     T replacedBy(String replacement);
 
@@ -34,6 +45,7 @@ public interface CommonDeprecationSpec<T extends CommonDeprecationSpec<?>> {
      *
      * @param opaqueVersion the version from which the deprecated behavior will be removed. E.g. "version-1.2.3"
      * @return the fluent builder used to call this
+     * @since 8.13
      */
     T removedInVersion(String opaqueVersion);
 
@@ -46,12 +58,15 @@ public interface CommonDeprecationSpec<T extends CommonDeprecationSpec<?>> {
      * @param minor the minor version from which the deprecated behavior will be removed
      * @param patch the patch version from which the deprecated behavior will be removed
      * @return the fluent builder used to call this
+     * @since 8.13
      */
     T removedInVersion(Integer major, @Nullable Integer minor, @Nullable String patch);
 
     /**
      * Declares an optional reasoning why the deprecation is happening.
+     *
      * @return the fluent builder used to call this
+     * @since 8.13
      */
     T because(String reason);
 
@@ -60,6 +75,7 @@ public interface CommonDeprecationSpec<T extends CommonDeprecationSpec<?>> {
      *
      * @param details the details of the deprecation
      * @return the fluent builder used to call this
+     * @since 8.13
      */
     T withDetails(String details);
 }

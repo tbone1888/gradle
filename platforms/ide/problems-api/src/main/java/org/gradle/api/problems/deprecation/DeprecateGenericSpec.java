@@ -16,6 +16,11 @@
 
 package org.gradle.api.problems.deprecation;
 
+/**
+ * Specification for building deprecations related to behavior.
+ *
+ * @since 8.13
+ */
 public interface DeprecateGenericSpec extends CommonDeprecationSpec<DeprecateGenericSpec> {
 
 }

@@ -23,7 +23,7 @@ import org.gradle.api.problems.internal.Problem;
 /**
  * Specialized reporter for deprecation problems.
  *
- * @since 8.12
+ * @since 8.13
  */
 @Incubating
 public interface DeprecationReporter {

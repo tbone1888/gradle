@@ -20,8 +20,21 @@ import org.gradle.api.problems.internal.AdditionalData;
 
 import javax.annotation.Nullable;
 
+/**
+ * Additional data shipped with a deprecation.
+ * <p>
+ * Not required by deprecation reporters.
+ * This class can be used by consumers to gather additional information about the deprecation.
+ *
+ * @since 8.13
+ */
 public interface DeprecationData extends AdditionalData {
-    @Nullable DeprecatedVersion getRemovedIn();
-    @Nullable String getReplacedBy();
-    @Nullable String getBecause();
+    @Nullable
+    DeprecatedVersion getRemovedIn();
+
+    @Nullable
+    String getReplacedBy();
+
+    @Nullable
+    String getBecause();
 }

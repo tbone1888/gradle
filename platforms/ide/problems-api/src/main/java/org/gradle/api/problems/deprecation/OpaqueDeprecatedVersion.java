@@ -25,6 +25,8 @@ import javax.annotation.Nullable;
  * <p>
  * Keep in mind that using this version in a deprecation will
  * when the code using a unit (e.g. plugin, build file, etc.) will stop working.
+ *
+ * @since 8.13
  */
 @Incubating
 public interface OpaqueDeprecatedVersion extends DeprecatedVersion {

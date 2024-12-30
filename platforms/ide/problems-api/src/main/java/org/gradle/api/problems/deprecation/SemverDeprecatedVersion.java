@@ -25,6 +25,8 @@ import javax.annotation.Nullable;
  * <p>
  * One significant difference between this and {@link OpaqueDeprecatedVersion} is that this version is sortable.
  * With ordering, we can determine a minimum version when the code using deprecations will break.
+ *
+ * @since 8.13
  */
 @Incubating
 public interface SemverDeprecatedVersion extends DeprecatedVersion {

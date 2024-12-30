@@ -16,6 +16,14 @@
 
 package org.gradle.api.problems.deprecation;
 
+import org.gradle.api.Incubating;
+
+/**
+ * Specification for building deprecations related to behavior.
+ *
+ * @since 8.13
+ */
+@Incubating
 public interface DeprecateBehaviorSpec extends CommonDeprecationSpec<DeprecateBehaviorSpec> {
 
 }
