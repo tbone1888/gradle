@@ -16,7 +16,7 @@
 
 package org.gradle.integtests.tooling.r813
 
-
+import org.gradle.integtests.tooling.fixture.TargetGradleVersion
 import org.gradle.integtests.tooling.fixture.ToolingApiSpecification
 import org.gradle.integtests.tooling.fixture.ToolingApiVersion
 import org.gradle.test.precondition.Requires
@@ -24,17 +24,14 @@ import org.gradle.test.preconditions.IntegTestPreconditions
 import org.gradle.tooling.ProjectConnection
 
 @ToolingApiVersion(">=8.13")
+@TargetGradleVersion(">=8.13")
+@Requires(
+    value = IntegTestPreconditions.NotEmbeddedExecutor,
+    reason = "In order to pass JVM arguments to the Gradle daemon, we need to use the external executor."
+)
 class AbstractLongRunningOperationCrossVersionTest extends ToolingApiSpecification {
 
-    @Requires(
-        value = IntegTestPreconditions.NotEmbeddedExecutor,
-        reason = "In order to pass JVM arguments to the Gradle daemon, we need to use the external executor."
-    )
-    def "jvm argument added by #addJvmArguments should not reset lists of JVM arguments"() {
-        given:
-//        requireIsolatedUserHome()
-//        file("user-home-dir").file("gradle.properties") << "org.gradle.jvmargs=-Dgradle-properties-arg -Xmx2g"
-
+    def setup() {
         buildFile """
 import java.lang.management.ManagementFactory
 
@@ -50,6 +47,10 @@ println("System properties")
 println(systemProperties)
 file("system-properties.txt").text = System.getProperties().keySet().join("\\n")
         """
+    }
+
+    def "#addJvmArguments should not reset properties defined in project gradle properties"() {
+        given:
         propertiesFile << "org.gradle.jvmargs=-Dgradle-properties-arg -Xmx2g"
 
         when:
@@ -62,10 +63,34 @@ file("system-properties.txt").text = System.getProperties().keySet().join("\\n")
         }
 
         then:
-        def args = file("system-properties.txt").text.split("\n")
+        def jvmArgs = file("jvm-args.txt").text.split("\n")
+        def sysProperties = file("system-properties.txt").text.split("\n")
         verifyAll {
-            args.contains("gradle-properties-arg")
-            args.contains("add-jvm-arg")
+            sysProperties.contains("gradle-properties-arg")
+            sysProperties.contains("add-jvm-arg")
+        }
+    }
+
+    def "#addJvmArguments should not reset properties defined user home gradle properties"() {
+        given:
+        requireIsolatedUserHome()
+        file("user-home-dir").file("gradle.properties") << "org.gradle.jvmargs=-Dgradle-properties-arg -Xmx2g"
+
+        when:
+        withConnection { ProjectConnection connection ->
+            connection
+                .newBuild()
+                .forTasks("help")
+                .addJvmArguments("-Dadd-jvm-arg")
+                .run()
+        }
+
+        then:
+        def jvmArgs = file("jvm-args.txt").text.split("\n")
+        def sysProperties = file("system-properties.txt").text.split("\n")
+        verifyAll {
+            sysProperties.contains("gradle-properties-arg")
+            sysProperties.contains("add-jvm-arg")
         }
     }
 
