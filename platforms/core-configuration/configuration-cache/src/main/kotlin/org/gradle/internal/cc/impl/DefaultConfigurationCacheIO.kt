@@ -103,14 +103,12 @@ class DefaultConfigurationCacheIO internal constructor(
     private val eventEmitter: BuildOperationProgressEventEmitter,
     private val classLoaderScopeRegistryListener: ConfigurationCacheClassLoaderScopeRegistryListener,
     private val classLoaderScopeRegistry: ClassLoaderScopeRegistry,
-    private val instantiatorFactory: InstantiatorFactory
+    private val instantiatorFactory: InstantiatorFactory,
+    private val encryptionService: EncryptionService,
 ) : ConfigurationCacheBuildTreeIO, ConfigurationCacheIncludedBuildIO {
 
     private
     val codecs = codecs()
-
-    private
-    val encryptionService by lazy { service<EncryptionService>() }
 
     override fun writeCacheEntryDetailsTo(
         buildStateRegistry: BuildStateRegistry,
