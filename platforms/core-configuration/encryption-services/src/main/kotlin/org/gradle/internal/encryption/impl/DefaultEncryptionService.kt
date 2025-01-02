@@ -36,7 +36,6 @@ import java.security.InvalidKeyException
 import javax.crypto.SecretKey
 
 
-@ServiceScope(Scope.BuildTree::class)
 internal
 class DefaultEncryptionService(
     options: InternalOptions,
